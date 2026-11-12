@@ -74,4 +74,11 @@ end $$;''')
 header = open('scripts/schema-header.sql').read()
 open('supabase/migrations/20261111000000_base44_entities.sql', 'w').write(header + '\n' + '\n'.join(out))
 json.dump(mapping, open('src/api/entity-tables.json', 'w'), indent=1)
+columns = {}
+for f in sorted(glob.glob('base44-reference/entities/*.jsonc')):
+    e = json.load(open(f))
+    if e['name'] in mapping: columns[e['name']] = sorted(e['properties'])
+for path in ('src/api/entity-columns.json', 'supabase/functions/_shared/entity-columns.json'):
+    json.dump(columns, open(path, 'w'), indent=1)
+import shutil; shutil.copy('src/api/entity-tables.json', 'supabase/functions/_shared/entity-tables.json')
 print(len(mapping), 'tables')

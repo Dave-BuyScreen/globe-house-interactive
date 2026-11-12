@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 
 const LOGO_INTRO_VIDEO =
-  "https://media.base44.com/videos/public/6999eeb5400ab46cf574d543/a99140999_export.mp4";
+  "/brand/a99140999_export.mp4";
 
 // Play the logo intro for this many seconds, then fade to the text + Enter button.
 const INTRO_DURATION_SECONDS = 3;

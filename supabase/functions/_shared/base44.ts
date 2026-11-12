@@ -3,6 +3,7 @@
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.45.4';
 import Anthropic from 'npm:@anthropic-ai/sdk';
 import entityTables from './entity-tables.json' with { type: 'json' };
+import entityColumns from './entity-columns.json' with { type: 'json' };
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -27,11 +28,19 @@ export function serve(handler: (req: Request) => Response | Promise<Response>) {
 
 const httpError = (message: string, status: number) => Object.assign(new Error(message), { status });
 
-const clean = (row: Record<string, unknown>) => {
+// Keep only real columns: Base44 silently accepted unknown/read-only fields, Postgres rejects them.
+const clean = (name: string, row: Record<string, unknown>) => {
   if (!row || typeof row !== 'object') return row;
-  const { id: _i, created_date: _c, updated_date: _u, created_by: _b, created_by_id: _bi, ...rest } = row;
-  return rest;
+  const allowed = new Set((entityColumns as Record<string, string[]>)[name] || []);
+  return Object.fromEntries(Object.entries(row).filter(([k]) => allowed.has(k)));
 };
+
+// Base44 omits never-set fields; Postgres returns null. Match Base44.
+// deno-lint-ignore no-explicit-any
+const stripNulls = (row: any) =>
+  row && typeof row === 'object' && !Array.isArray(row)
+    ? Object.fromEntries(Object.entries(row).filter(([, v]) => v !== null))
+    : row;
 
 function makeEntities(sb: SupabaseClient) {
   const make = (name: string) => {
@@ -52,7 +61,10 @@ function makeEntities(sb: SupabaseClient) {
       return q;
     };
     // deno-lint-ignore no-explicit-any
-    const unwrap = ({ data, error }: any) => { if (error) throw httpError(error.message, 400); return data; };
+    const unwrap = ({ data, error }: any) => {
+      if (error) throw httpError(error.message, 400);
+      return Array.isArray(data) ? data.map(stripNulls) : stripNulls(data);
+    };
     return {
       list: async (s?: string, limit?: number) => {
         let q = sort(sb.from(table).select('*'), s);
@@ -65,10 +77,10 @@ function makeEntities(sb: SupabaseClient) {
         return unwrap(await q);
       },
       get: async (id: string) => unwrap(await sb.from(table).select('*').eq('id', id).maybeSingle()),
-      create: async (data: Record<string, unknown>) => unwrap(await sb.from(table).insert(clean(data)).select().single()),
-      bulkCreate: async (rows: Record<string, unknown>[]) => unwrap(await sb.from(table).insert(rows.map(clean)).select()),
+      create: async (data: Record<string, unknown>) => unwrap(await sb.from(table).insert(clean(name, data)).select().single()),
+      bulkCreate: async (rows: Record<string, unknown>[]) => unwrap(await sb.from(table).insert(rows.map((r) => clean(name, r))).select()),
       update: async (id: string, data: Record<string, unknown>) =>
-        unwrap(await sb.from(table).update(clean(data)).eq('id', id).select().single()),
+        unwrap(await sb.from(table).update(clean(name, data)).eq('id', id).select().single()),
       delete: async (id: string) => { unwrap(await sb.from(table).delete().eq('id', id)); return { id }; },
     };
   };

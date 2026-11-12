@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const DOOR_IMAGE =
-  "https://media.base44.com/images/public/6999eeb5400ab46cf574d543/10d465a6a_generated_image.png";
+  "/brand/10d465a6a_generated_image.png";
 
 // Two full-height iron-cast door panels meet at the screen's center.
 // When `open` is true they slide apart symmetrically (left pulls left,

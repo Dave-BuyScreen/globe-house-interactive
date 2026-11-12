@@ -4,9 +4,9 @@ import AppearancePanel from "./AppearancePanel";
 import FleurDeLisCenterpiece from "@/components/layout/cabinet/FleurDeLisCenterpiece";
 
 const HERO_IMAGE =
-  "https://media.base44.com/images/public/6999eeb5400ab46cf574d543/0a8a9a195_TheNewestGlobeHouseLandingPage.PNG";
+  "/brand/0a8a9a195_TheNewestGlobeHouseLandingPage.PNG";
 const HERO_IMAGE_MOBILE =
-  "https://media.base44.com/images/public/6999eeb5400ab46cf574d543/3ac91a905_globeHousePortrait9-16newpage.PNG";
+  "/brand/3ac91a905_globeHousePortrait9-16newpage.PNG";
 
 export default function ConciergeHero({ effectiveIsAdmin, onOpenManager, siteSettings }) {
   return (

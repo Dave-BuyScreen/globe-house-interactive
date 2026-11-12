@@ -4,6 +4,7 @@
 // and edge functions.
 import { supabase } from '@/lib/supabase';
 import entityTables from './entity-tables.json';
+import entityColumns from './entity-columns.json';
 
 const requireClient = () => {
   if (!supabase) throw new Error('Supabase is not configured');
@@ -31,16 +32,31 @@ const applyFilter = (q, query = {}) => {
   return q;
 };
 
+// Base44 omits fields that were never set; Postgres returns null. Drop nulls so code
+// written for Base44 (e.g. `const { triggers = [] } = episode`) behaves the same.
+const stripNulls = (row) =>
+  row && typeof row === 'object' && !Array.isArray(row)
+    ? Object.fromEntries(Object.entries(row).filter(([, v]) => v !== null))
+    : row;
+
 const unwrap = ({ data, error, status }) => {
   if (error) throw httpError(error.message, status || 400, error);
-  return data;
+  return Array.isArray(data) ? data.map(stripNulls) : stripNulls(data);
 };
 
-// Drop keys Supabase would reject (Base44 lets clients send read-only fields)
-const clean = (row) => {
+// Keep only real columns: Base44 silently accepted unknown/read-only fields, Postgres rejects them.
+const clean = (name, row) => {
   if (!row || typeof row !== 'object') return row;
-  const { id, created_date, updated_date, created_by, created_by_id, ...rest } = row;
-  return rest;
+  const allowed = new Set(entityColumns[name] || []);
+  const out = {};
+  for (const [k, v] of Object.entries(row)) {
+    if (v === undefined) continue; // JSON drops undefined, so Base44 left these fields unchanged
+    if (allowed.has(k)) out[k] = v;
+    else if (!['id', 'created_date', 'updated_date', 'created_by', 'created_by_id'].includes(k)) {
+      console.warn(`[base44 shim] ${name}: ignoring unknown field "${k}"`);
+    }
+  }
+  return out;
 };
 
 const makeEntity = (name) => {
@@ -64,13 +80,13 @@ const makeEntity = (name) => {
       return row;
     },
     async create(data) {
-      return unwrap(await from().insert(clean(data)).select().single());
+      return unwrap(await from().insert(clean(name, data)).select().single());
     },
     async bulkCreate(rows) {
-      return unwrap(await from().insert((rows || []).map(clean)).select());
+      return unwrap(await from().insert((rows || []).map((r) => clean(name, r))).select());
     },
     async update(id, data) {
-      return unwrap(await from().update(clean(data)).eq('id', id).select().single());
+      return unwrap(await from().update(clean(name, data)).eq('id', id).select().single());
     },
     async delete(id) {
       unwrap(await from().delete().eq('id', id));

@@ -1,7 +1,7 @@
 import React from "react";
 
 const CENTERPIECE_IMG =
-  "https://media.base44.com/images/public/6999eeb5400ab46cf574d543/064306c7c_GoldenCrescentCenterpiece.png";
+  "/brand/064306c7c_GoldenCrescentCenterpiece.png";
 
 /**
  * Centerpiece for the nav crown — a transparent golden fleur-de-lis
