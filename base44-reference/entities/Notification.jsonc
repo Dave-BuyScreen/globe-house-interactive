@@ -1,0 +1,43 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user receiving the notification"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "new_episode",
+        "system_update",
+        "trigger_update",
+        "general"
+      ],
+      "default": "general",
+      "description": "Type of notification"
+    },
+    "title": {
+      "type": "string",
+      "description": "Notification title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Notification message"
+    },
+    "episode_id": {
+      "type": "string",
+      "description": "Related episode ID if applicable"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether user has read the notification"
+    }
+  },
+  "required": [
+    "user_email",
+    "title",
+    "message"
+  ]
+}

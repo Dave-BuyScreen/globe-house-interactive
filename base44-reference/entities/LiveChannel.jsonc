@@ -1,0 +1,26 @@
+{
+  "name": "LiveChannel",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Channel name displayed to viewers"
+    },
+    "vimeo_embed_url": {
+      "type": "string",
+      "description": "Vimeo live embed URL (e.g. https://player.vimeo.com/video/XXXXXXX)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional channel description shown below the player"
+    },
+    "is_live": {
+      "type": "boolean",
+      "default": false,
+      "description": "Toggle to show/hide the LIVE badge"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

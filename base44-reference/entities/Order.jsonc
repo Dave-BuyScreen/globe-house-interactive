@@ -1,0 +1,56 @@
+{
+  "name": "Order",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Customer email"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Product purchased"
+    },
+    "product_description": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Purchase amount"
+    },
+    "currency": {
+      "type": "string",
+      "default": "usd"
+    },
+    "stripe_payment_intent_id": {
+      "type": "string",
+      "description": "Stripe payment intent ID"
+    },
+    "episode_id": {
+      "type": "string",
+      "description": "Episode where purchase was made"
+    },
+    "trigger_timestamp": {
+      "type": "number",
+      "description": "Video timestamp of trigger"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed",
+        "refunded"
+      ],
+      "default": "pending"
+    },
+    "customer_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_email",
+    "product_name",
+    "amount",
+    "stripe_payment_intent_id"
+  ]
+}

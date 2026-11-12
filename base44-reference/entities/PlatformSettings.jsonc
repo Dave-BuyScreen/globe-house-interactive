@@ -1,0 +1,51 @@
+{
+  "name": "PlatformSettings",
+  "type": "object",
+  "properties": {
+    "platform_fee_rate": {
+      "type": "number",
+      "default": 0.05,
+      "description": "Global platform fee as a decimal (e.g. 0.05 = 5%)"
+    },
+    "default_creator_commission_rate": {
+      "type": "number",
+      "default": 0.1,
+      "description": "Default creator commission rate (e.g. 0.10 = 10%)"
+    },
+    "stripe_connect_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether Stripe Connect payouts are live"
+    },
+    "subscription_tiers": {
+      "type": "object",
+      "description": "Merchant subscription tier pricing",
+      "properties": {
+        "free": {
+          "type": "number",
+          "default": 0
+        },
+        "starter": {
+          "type": "number",
+          "default": 2900
+        },
+        "pro": {
+          "type": "number",
+          "default": 9900
+        },
+        "enterprise": {
+          "type": "number",
+          "default": 49900
+        }
+      }
+    },
+    "platform_name": {
+      "type": "string",
+      "default": "BuyScreen"
+    },
+    "support_email": {
+      "type": "string"
+    }
+  },
+  "required": []
+}

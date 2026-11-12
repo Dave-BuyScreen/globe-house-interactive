@@ -5,3 +5,7 @@ dist
 !.env.example
 .vercel
 .DS_Store
+
+# Exported production data (contains customer emails)
+supabase/data/
+supabase/.temp/

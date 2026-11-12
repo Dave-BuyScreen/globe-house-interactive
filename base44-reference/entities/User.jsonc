@@ -1,0 +1,17 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user",
+        "editor"
+      ],
+      "default": "user",
+      "description": "User role: admin (full access), editor (episodes/triggers only), user (view only)"
+    }
+  },
+  "required": []
+}

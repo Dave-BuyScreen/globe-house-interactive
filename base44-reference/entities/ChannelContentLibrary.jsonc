@@ -1,0 +1,71 @@
+{
+  "name": "ChannelContentLibrary",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "vimeo_embed_url": {
+      "type": "string"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "description": "Duration in seconds"
+    },
+    "thumbnail": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "music",
+        "comedy",
+        "documentary",
+        "talk_show",
+        "sports",
+        "arts",
+        "jazz",
+        "other"
+      ],
+      "default": "other"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "priority_score": {
+      "type": "number",
+      "default": 5,
+      "description": "1\u201310, higher = scheduled more often"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "release_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "allowed_time_blocks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "morning",
+          "afternoon",
+          "primetime",
+          "latenight",
+          "overnight"
+        ]
+      }
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

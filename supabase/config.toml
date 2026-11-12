@@ -1,0 +1,5 @@
+project_id = "ohfjvvllqlkbxduslypl"
+
+# Stripe calls this directly, so it cannot send a Supabase JWT; the function verifies the Stripe signature instead.
+[functions.stripeWebhook]
+verify_jwt = false

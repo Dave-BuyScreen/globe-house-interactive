@@ -1,0 +1,128 @@
+{
+  "name": "VideoObjectMapping",
+  "type": "object",
+  "properties": {
+    "episode_id": {
+      "type": "string",
+      "description": "The ID of the episode this mapping belongs to"
+    },
+    "object_id": {
+      "type": "string",
+      "description": "Unique identifier for the object within the video"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable name for the object (e.g., 'Red Scarf')"
+    },
+    "zone_h": {
+      "type": "string",
+      "enum": [
+        "FL",
+        "L",
+        "ML",
+        "M",
+        "MR",
+        "R",
+        "FR"
+      ],
+      "description": "Horizontal semantic zone"
+    },
+    "zone_v": {
+      "type": "string",
+      "enum": [
+        "HU",
+        "U",
+        "UC",
+        "C",
+        "BC",
+        "B",
+        "LB"
+      ],
+      "description": "Vertical semantic zone"
+    },
+    "bounding_box": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "description": "X-coordinate (0-1, percentage)"
+        },
+        "y": {
+          "type": "number",
+          "description": "Y-coordinate (0-1, percentage)"
+        },
+        "width": {
+          "type": "number",
+          "description": "Width (0-1, percentage)"
+        },
+        "height": {
+          "type": "number",
+          "description": "Height (0-1, percentage)"
+        }
+      }
+    },
+    "anchor_point": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "description": "X-coordinate (0-1, percentage)"
+        },
+        "y": {
+          "type": "number",
+          "description": "Y-coordinate (0-1, percentage)"
+        }
+      }
+    },
+    "start_time": {
+      "type": "number",
+      "description": "Time in seconds when the object becomes interactive"
+    },
+    "end_time": {
+      "type": "number",
+      "description": "Time in seconds when the object stops being interactive"
+    },
+    "z_index": {
+      "type": "number",
+      "default": 0,
+      "description": "Depth priority for overlapping objects"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "ID of the associated product"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Product name (cached)"
+    },
+    "product_price": {
+      "type": "string",
+      "description": "Product price (cached)"
+    },
+    "product_image_url": {
+      "type": "string",
+      "description": "Product image URL (cached)"
+    },
+    "shop_url": {
+      "type": "string",
+      "description": "Purchase link"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "confirmed"
+      ],
+      "default": "draft",
+      "description": "Mapping status"
+    }
+  },
+  "required": [
+    "episode_id",
+    "label",
+    "zone_h",
+    "zone_v",
+    "start_time",
+    "end_time"
+  ]
+}

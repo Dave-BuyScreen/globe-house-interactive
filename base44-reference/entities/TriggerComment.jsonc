@@ -1,0 +1,50 @@
+{
+  "name": "TriggerComment",
+  "type": "object",
+  "properties": {
+    "episode_id": {
+      "type": "string",
+      "description": "Episode ID"
+    },
+    "trigger_index": {
+      "type": "number",
+      "description": "Index of the trigger in the episode's triggers array"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Comment author email"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Comment author name"
+    },
+    "comment_text": {
+      "type": "string",
+      "description": "Comment content"
+    },
+    "comment_type": {
+      "type": "string",
+      "enum": [
+        "general",
+        "suggestion",
+        "issue",
+        "approval"
+      ],
+      "default": "general"
+    },
+    "resolved": {
+      "type": "boolean",
+      "default": false
+    },
+    "parent_comment_id": {
+      "type": "string",
+      "description": "For threaded replies"
+    }
+  },
+  "required": [
+    "episode_id",
+    "trigger_index",
+    "author_email",
+    "comment_text"
+  ]
+}

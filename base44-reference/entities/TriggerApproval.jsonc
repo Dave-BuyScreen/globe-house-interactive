@@ -1,0 +1,37 @@
+{
+  "name": "TriggerApproval",
+  "type": "object",
+  "properties": {
+    "episode_id": {
+      "type": "string"
+    },
+    "trigger_index": {
+      "type": "number"
+    },
+    "approver_email": {
+      "type": "string"
+    },
+    "approver_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "rejected",
+        "needs_changes"
+      ],
+      "description": "Approval status"
+    },
+    "feedback": {
+      "type": "string",
+      "description": "Feedback from approver"
+    }
+  },
+  "required": [
+    "episode_id",
+    "trigger_index",
+    "approver_email",
+    "status"
+  ]
+}

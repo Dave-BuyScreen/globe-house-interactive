@@ -1,0 +1,148 @@
+{
+  "name": "ProductRegistry",
+  "type": "object",
+  "properties": {
+    "merchant_id": {
+      "type": "string",
+      "description": "ID of the owning Merchant"
+    },
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "brand": {
+      "type": "string",
+      "description": "Brand name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Full product description"
+    },
+    "short_description": {
+      "type": "string",
+      "description": "Short tagline for BuyScreen overlay"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price in cents (e.g. 4999 = $49.99)"
+    },
+    "display_price": {
+      "type": "string",
+      "description": "Human-readable price string (e.g. $49.99)"
+    },
+    "sku": {
+      "type": "string",
+      "description": "Stock keeping unit identifier"
+    },
+    "inventory": {
+      "type": "number",
+      "default": 0,
+      "description": "Current inventory count"
+    },
+    "inventory_status": {
+      "type": "string",
+      "enum": [
+        "in_stock",
+        "low_stock",
+        "out_of_stock",
+        "unlimited"
+      ],
+      "default": "in_stock"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Primary product image URL"
+    },
+    "additional_images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional product image URLs"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "wellness",
+        "home",
+        "beauty",
+        "kitchen",
+        "fashion",
+        "facilities",
+        "other"
+      ],
+      "default": "other",
+      "description": "Product category"
+    },
+    "product_url": {
+      "type": "string",
+      "description": "External product / purchase URL"
+    },
+    "model_url": {
+      "type": "string",
+      "description": "3D model .glb URL for AR viewer"
+    },
+    "character_quote": {
+      "type": "string",
+      "description": "Creator / character quote tied to product"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the product is approved and available for placement"
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "needs_changes"
+      ],
+      "default": "pending",
+      "description": "Admin approval state for this product"
+    },
+    "approval_notes": {
+      "type": "string",
+      "description": "Admin feedback on approval decision"
+    },
+    "approved_at": {
+      "type": "string",
+      "description": "ISO timestamp when product was approved"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Admin email who approved this product"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Searchable tags"
+    },
+    "migrated_from_episode": {
+      "type": "string",
+      "description": "Episode ID this product was originally embedded in (migration tracking)"
+    },
+    "total_revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Lifetime revenue generated in cents"
+    },
+    "total_sales": {
+      "type": "number",
+      "default": 0,
+      "description": "Total number of units sold"
+    }
+  },
+  "required": [
+    "merchant_id",
+    "name",
+    "price"
+  ]
+}

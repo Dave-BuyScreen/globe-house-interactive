@@ -1,0 +1,103 @@
+{
+  "name": "Transaction",
+  "type": "object",
+  "properties": {
+    "stripe_payment_intent_id": {
+      "type": "string",
+      "description": "Stripe PaymentIntent ID"
+    },
+    "stripe_transfer_id": {
+      "type": "string",
+      "description": "Stripe Transfer ID to merchant"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Purchasing customer email"
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "merchant_id": {
+      "type": "string",
+      "description": "Merchant receiving payout"
+    },
+    "creator_id": {
+      "type": "string",
+      "description": "Creator earning commission"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "ProductRegistry ID"
+    },
+    "episode_id": {
+      "type": "string",
+      "description": "Episode where the purchase was triggered"
+    },
+    "trigger_timestamp": {
+      "type": "number",
+      "description": "Video timestamp (seconds) when purchase was initiated"
+    },
+    "gross_amount": {
+      "type": "number",
+      "description": "Total charged to customer in cents"
+    },
+    "platform_fee": {
+      "type": "number",
+      "description": "Platform fee amount in cents"
+    },
+    "platform_fee_rate": {
+      "type": "number",
+      "description": "Platform fee rate used (e.g. 0.05 = 5%)"
+    },
+    "creator_commission": {
+      "type": "number",
+      "description": "Creator commission amount in cents"
+    },
+    "creator_commission_rate": {
+      "type": "number",
+      "description": "Creator commission rate used"
+    },
+    "merchant_payout": {
+      "type": "number",
+      "description": "Net amount paid to merchant in cents"
+    },
+    "currency": {
+      "type": "string",
+      "default": "usd"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "succeeded",
+        "failed",
+        "refunded",
+        "disputed"
+      ],
+      "default": "pending"
+    },
+    "refund_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "partial",
+        "full"
+      ],
+      "default": "none"
+    },
+    "refund_amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Refunded amount in cents"
+    },
+    "metadata": {
+      "type": "string",
+      "description": "Additional JSON metadata"
+    }
+  },
+  "required": [
+    "stripe_payment_intent_id",
+    "customer_email",
+    "gross_amount"
+  ]
+}

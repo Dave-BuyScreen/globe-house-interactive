@@ -1,0 +1,45 @@
+{
+  "name": "WishlistItem",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who saved the item"
+    },
+    "episode_id": {
+      "type": "string",
+      "description": "ID of the episode the product appeared in"
+    },
+    "episode_title": {
+      "type": "string",
+      "description": "Cached episode title"
+    },
+    "product_name": {
+      "type": "string"
+    },
+    "product_brand": {
+      "type": "string"
+    },
+    "product_price": {
+      "type": "string"
+    },
+    "product_image_url": {
+      "type": "string"
+    },
+    "product_description": {
+      "type": "string"
+    },
+    "shop_url": {
+      "type": "string"
+    },
+    "trigger_timestamp": {
+      "type": "number",
+      "description": "The video timestamp where this product appeared"
+    }
+  },
+  "required": [
+    "user_email",
+    "episode_id",
+    "product_name"
+  ]
+}

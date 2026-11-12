@@ -1,0 +1,64 @@
+{
+  "name": "LiveChannelSchedule",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Program title"
+    },
+    "description": {
+      "type": "string"
+    },
+    "vimeo_embed_url": {
+      "type": "string",
+      "description": "Full Vimeo embed URL"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "ISO 8601 datetime string (e.g. 2026-03-10T18:00:00)"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "ISO 8601 datetime string"
+    },
+    "duration_minutes": {
+      "type": "number"
+    },
+    "thumbnail": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "music",
+        "comedy",
+        "documentary",
+        "talk_show",
+        "sports",
+        "arts",
+        "jazz",
+        "other"
+      ],
+      "default": "other"
+    },
+    "ar_trigger_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "trigger_timestamp": {
+      "type": "number",
+      "description": "Seconds into video when AR trigger fires"
+    },
+    "product_id": {
+      "type": "string"
+    },
+    "product_link": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "start_time",
+    "end_time"
+  ]
+}

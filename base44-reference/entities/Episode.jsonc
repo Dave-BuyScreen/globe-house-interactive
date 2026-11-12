@@ -1,0 +1,201 @@
+{
+  "name": "Episode",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Episode title"
+    },
+    "vimeo_url": {
+      "type": "string",
+      "description": "Vimeo video URL or embed URL"
+    },
+    "youtube_url": {
+      "type": "string",
+      "description": "YouTube video URL"
+    },
+    "thumbnail_url": {
+      "type": "string",
+      "description": "Episode thumbnail image URL"
+    },
+    "summary": {
+      "type": "string",
+      "description": "AI-generated or manual episode summary"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "SEO keywords and tags"
+    },
+    "theme_color": {
+      "type": "string",
+      "default": "#8B5CF6",
+      "description": "Character theme accent color (hex)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "globehouse",
+        "buyscreen"
+      ],
+      "default": "globehouse",
+      "description": "Which side this episode belongs to: globehouse (niche dedicated content) or buyscreen (open marketplace videos)"
+    },
+    "marketplace_category": {
+      "type": "string",
+      "enum": [
+        "wellness",
+        "home",
+        "beauty",
+        "kitchen",
+        "fashion",
+        "facilities",
+        "other"
+      ],
+      "default": "other",
+      "description": "Product/category tag for BuyScreen Marketplace videos"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "red_rooster_jazz",
+        "comedy_lounge",
+        "documentaries",
+        "tv_shows",
+        "other"
+      ],
+      "default": "other",
+      "description": "Content category"
+    },
+    "assigned_floors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Floor keys this episode is explicitly assigned to, enabling placement on one or more dashboard floors beyond its category/status"
+    },
+    "triggers": {
+      "type": "array",
+      "description": "Timestamp-based trigger events",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trigger_type": {
+            "type": "string",
+            "enum": [
+              "full_portal",
+              "buyscreen_only"
+            ],
+            "default": "full_portal",
+            "description": "full_portal shows choice screen; buyscreen_only goes straight to product overlay"
+          },
+          "timestamp": {
+            "type": "number",
+            "description": "Trigger time in seconds"
+          },
+          "prompt_text": {
+            "type": "string",
+            "description": "Prompt shown to viewer"
+          },
+          "confessional_video_url": {
+            "type": "string",
+            "description": "URL to confessional clip"
+          },
+          "confessional_duration": {
+            "type": "number",
+            "description": "Duration of confessional in seconds"
+          },
+          "product_image_url": {
+            "type": "string",
+            "description": "Product image for BuyScreen"
+          },
+          "product_name": {
+            "type": "string"
+          },
+          "product_brand": {
+            "type": "string",
+            "description": "Brand name of the product"
+          },
+          "product_price": {
+            "type": "string"
+          },
+          "product_description": {
+            "type": "string",
+            "description": "Short product description"
+          },
+          "product_quote": {
+            "type": "string",
+            "description": "Character quote tied to product"
+          },
+          "shop_url": {
+            "type": "string",
+            "description": "External shop link"
+          },
+          "model_url": {
+            "type": "string",
+            "description": "3D model .glb URL for AR viewer"
+          },
+          "model_embed_code": {
+            "type": "string",
+            "description": "Embedded 3D viewer code (iframe or script)"
+          },
+          "detection_status": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "auto_detected",
+              "auto_matched",
+              "needs_review"
+            ],
+            "description": "How this trigger was created"
+          },
+          "confidence_score": {
+            "type": "number",
+            "description": "AI confidence score (0-1) for auto-detected items"
+          },
+          "bounding_box": {
+            "type": "object",
+            "description": "Object location in video frame (for highlighting)",
+            "properties": {
+              "x": {
+                "type": "number",
+                "description": "X position as percentage from left (0-100)"
+              },
+              "y": {
+                "type": "number",
+                "description": "Y position as percentage from top (0-100)"
+              },
+              "width": {
+                "type": "number",
+                "description": "Width as percentage of frame (0-100)"
+              },
+              "height": {
+                "type": "number",
+                "description": "Height as percentage of frame (0-100)"
+              }
+            }
+          },
+          "duration": {
+            "type": "number",
+            "description": "How long this trigger remains active (seconds)"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

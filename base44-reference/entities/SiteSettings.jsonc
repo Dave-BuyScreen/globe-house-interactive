@@ -1,0 +1,132 @@
+{
+  "name": "SiteSettings",
+  "type": "object",
+  "properties": {
+    "logo_url": {
+      "type": "string",
+      "description": "Logo image URL"
+    },
+    "favicon_url": {
+      "type": "string",
+      "description": "Favicon image URL (shown in browser tab)"
+    },
+    "heading_color": {
+      "type": "string",
+      "default": "#ffffff",
+      "description": "Color for section heading text"
+    },
+    "body_text_color": {
+      "type": "string",
+      "default": "rgba(255,255,255,0.6)",
+      "description": "Color for body / description text"
+    },
+    "nav_text_color": {
+      "type": "string",
+      "default": "rgba(255,255,255,0.5)",
+      "description": "Color for navigation link text"
+    },
+    "accent_text_color": {
+      "type": "string",
+      "default": "#a78bfa",
+      "description": "Color for accent / highlight text"
+    },
+    "card_text_color": {
+      "type": "string",
+      "default": "#ffffff",
+      "description": "Color for card title text"
+    },
+    "text_color": {
+      "type": "string",
+      "default": "#ffffff",
+      "description": "Legacy: general text color"
+    },
+    "gateway_tv_image": {
+      "type": "string",
+      "description": "Background image URL for GlobeHouse TV side of the Gateway landing page"
+    },
+    "gateway_buy_image": {
+      "type": "string",
+      "description": "Background image URL for BuyScreen Marketplace side of the Gateway landing page"
+    },
+    "gateway_tv_logo": {
+      "type": "string",
+      "description": "Logo image URL displayed above the GlobeHouse TV title"
+    },
+    "gateway_buy_logo": {
+      "type": "string",
+      "description": "Logo image URL displayed above the BuyScreen Marketplace title"
+    },
+    "intro_desktop_video_url": {
+      "type": "string",
+      "description": "Landing-page intro video for desktop/tablet (16:9 master). Falls back to hardcoded default if unset."
+    },
+    "intro_mobile_video_url": {
+      "type": "string",
+      "description": "Landing-page intro video for mobile (9:16 portrait master). Falls back to desktop version if unset."
+    },
+    "row_labels": {
+      "type": "object",
+      "description": "Legacy custom labels for dashboard hotel floors (superseded by floors_config)",
+      "properties": {
+        "trending": {
+          "type": "string",
+          "default": "Grand Lobby"
+        },
+        "published": {
+          "type": "string",
+          "default": "The Mezzanine"
+        },
+        "draft": {
+          "type": "string",
+          "default": "The Atrium"
+        },
+        "red_rooster_jazz": {
+          "type": "string",
+          "default": "Jazz Parlour"
+        },
+        "comedy_lounge": {
+          "type": "string",
+          "default": "Comedy Lounge"
+        },
+        "documentaries": {
+          "type": "string",
+          "default": "Documentary Hall"
+        },
+        "tv_shows": {
+          "type": "string",
+          "default": "Theatre Suite"
+        }
+      }
+    },
+    "floors_config": {
+      "type": "array",
+      "description": "Admin-configured hotel floors (tag, name, blurb, type). Falls back to defaults when empty.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Unique floor key (used for React keys and scroll-spy)"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Short elevator letter/number shown on the floor badge and indicator"
+          },
+          "name": {
+            "type": "string",
+            "description": "Floor display name"
+          },
+          "blurb": {
+            "type": "string",
+            "description": "Short floor description"
+          },
+          "type": {
+            "type": "string",
+            "description": "Content source determining which episodes appear on this floor"
+          }
+        }
+      }
+    }
+  },
+  "required": []
+}

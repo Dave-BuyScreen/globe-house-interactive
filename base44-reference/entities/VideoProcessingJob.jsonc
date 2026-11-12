@@ -1,0 +1,93 @@
+{
+  "name": "VideoProcessingJob",
+  "type": "object",
+  "properties": {
+    "episode_id": {
+      "type": "string",
+      "description": "Associated episode ID"
+    },
+    "source_video_url": {
+      "type": "string",
+      "description": "Original uploaded video URL"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "processing",
+        "completed",
+        "failed"
+      ],
+      "default": "queued",
+      "description": "Processing status"
+    },
+    "progress": {
+      "type": "number",
+      "default": 0,
+      "description": "Processing progress (0-100)"
+    },
+    "output_formats": {
+      "type": "object",
+      "properties": {
+        "hls_playlist": {
+          "type": "string",
+          "description": "HLS master playlist URL"
+        },
+        "dash_manifest": {
+          "type": "string",
+          "description": "DASH manifest URL"
+        },
+        "mp4_1080p": {
+          "type": "string"
+        },
+        "mp4_720p": {
+          "type": "string"
+        },
+        "mp4_480p": {
+          "type": "string"
+        },
+        "mp4_360p": {
+          "type": "string"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "number",
+          "description": "Video duration in seconds"
+        },
+        "resolution": {
+          "type": "string",
+          "description": "Original resolution (e.g. 1920x1080)"
+        },
+        "file_size": {
+          "type": "number",
+          "description": "Original file size in bytes"
+        },
+        "codec": {
+          "type": "string"
+        },
+        "bitrate": {
+          "type": "number"
+        }
+      }
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error details if processing failed"
+    },
+    "started_at": {
+      "type": "string",
+      "description": "Processing start timestamp"
+    },
+    "completed_at": {
+      "type": "string",
+      "description": "Processing completion timestamp"
+    }
+  },
+  "required": [
+    "source_video_url"
+  ]
+}

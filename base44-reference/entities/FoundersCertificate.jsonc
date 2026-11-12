@@ -1,0 +1,52 @@
+{
+  "name": "FoundersCertificate",
+  "type": "object",
+  "properties": {
+    "serial_number": {
+      "type": "string",
+      "description": "Unique certificate serial number"
+    },
+    "founder_name": {
+      "type": "string",
+      "description": "Full name of the founder"
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the certificate was issued"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "Revoked"
+      ],
+      "default": "Active",
+      "description": "Certificate status"
+    },
+    "tier": {
+      "type": "string",
+      "description": "Founder tier (e.g. Genesis, Platinum, Gold)"
+    },
+    "ar_bonus_percentage": {
+      "type": "number",
+      "description": "AR bonus percentage allocated to this founder"
+    },
+    "founders_royalty": {
+      "type": "number",
+      "default": 5,
+      "description": "Founders royalty percentage"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal admin notes"
+    }
+  },
+  "required": [
+    "serial_number",
+    "founder_name",
+    "issue_date",
+    "status",
+    "tier"
+  ]
+}

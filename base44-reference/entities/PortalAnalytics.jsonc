@@ -1,0 +1,35 @@
+{
+  "name": "PortalAnalytics",
+  "type": "object",
+  "properties": {
+    "episode_id": {
+      "type": "string",
+      "description": "Episode ID"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "portal_open",
+        "confessional_view",
+        "confessional_complete",
+        "buyscreen_view",
+        "shop_click",
+        "video_resume",
+        "ar_launch"
+      ],
+      "description": "Type of analytics event"
+    },
+    "trigger_timestamp": {
+      "type": "number",
+      "description": "Video timestamp that triggered event"
+    },
+    "metadata": {
+      "type": "string",
+      "description": "Additional JSON metadata"
+    }
+  },
+  "required": [
+    "episode_id",
+    "event_type"
+  ]
+}

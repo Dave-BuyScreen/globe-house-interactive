@@ -1,0 +1,110 @@
+{
+  "name": "Merchant",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string",
+      "description": "Public-facing business name"
+    },
+    "legal_name": {
+      "type": "string",
+      "description": "Legal registered business name"
+    },
+    "tax_id": {
+      "type": "string",
+      "description": "EIN or tax identification number"
+    },
+    "stripe_account_id": {
+      "type": "string",
+      "description": "Stripe Connect account ID (acct_xxxxx)"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Primary contact email"
+    },
+    "website": {
+      "type": "string",
+      "description": "Merchant website URL"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Brand logo image URL"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "wellness",
+        "home",
+        "beauty",
+        "kitchen",
+        "fashion",
+        "facilities",
+        "other"
+      ],
+      "default": "other",
+      "description": "Primary product category"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "suspended",
+        "inactive"
+      ],
+      "default": "pending",
+      "description": "Merchant account status"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "unverified",
+        "under_review",
+        "verified",
+        "rejected"
+      ],
+      "default": "unverified",
+      "description": "KYC / identity verification status"
+    },
+    "verification_notes": {
+      "type": "string",
+      "description": "Admin notes on verification decision"
+    },
+    "verified_at": {
+      "type": "string",
+      "description": "ISO timestamp when merchant was verified"
+    },
+    "verified_by": {
+      "type": "string",
+      "description": "Admin email who verified this merchant"
+    },
+    "platform_fee_override": {
+      "type": "number",
+      "description": "Custom platform fee % for this merchant (overrides global setting). Leave null to use global."
+    },
+    "subscription_tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "starter",
+        "pro",
+        "enterprise"
+      ],
+      "default": "free",
+      "description": "Merchant subscription tier"
+    },
+    "onboarding_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether Stripe Connect onboarding is complete"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal admin notes"
+    }
+  },
+  "required": [
+    "company_name",
+    "contact_email"
+  ]
+}

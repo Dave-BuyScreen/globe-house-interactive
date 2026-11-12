@@ -1,0 +1,78 @@
+{
+  "name": "Creator",
+  "type": "object",
+  "properties": {
+    "display_name": {
+      "type": "string",
+      "description": "Public creator name / handle"
+    },
+    "full_name": {
+      "type": "string",
+      "description": "Legal full name"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Creator bio / description"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Profile image URL"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Primary contact email"
+    },
+    "stripe_account_id": {
+      "type": "string",
+      "description": "Stripe Connect account ID (acct_xxxxx)"
+    },
+    "default_commission_rate": {
+      "type": "number",
+      "default": 0.1,
+      "description": "Default commission rate as a decimal (e.g. 0.10 = 10%)"
+    },
+    "commission_model": {
+      "type": "string",
+      "enum": [
+        "percentage",
+        "flat_fee",
+        "merchant_defined"
+      ],
+      "default": "percentage",
+      "description": "How the creator earns compensation"
+    },
+    "flat_fee_amount": {
+      "type": "number",
+      "description": "Flat fee per sale in cents (used when commission_model = flat_fee)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "suspended",
+        "inactive"
+      ],
+      "default": "pending",
+      "description": "Creator account status"
+    },
+    "onboarding_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether Stripe Connect onboarding is complete"
+    },
+    "total_earnings": {
+      "type": "number",
+      "default": 0,
+      "description": "Lifetime earnings in cents"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal admin notes"
+    }
+  },
+  "required": [
+    "display_name",
+    "contact_email"
+  ]
+}

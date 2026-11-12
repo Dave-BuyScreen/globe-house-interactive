@@ -1,0 +1,70 @@
+{
+  "name": "EpisodeCollaborator",
+  "type": "object",
+  "properties": {
+    "episode_id": {
+      "type": "string",
+      "description": "Episode being collaborated on"
+    },
+    "collaborator_email": {
+      "type": "string",
+      "description": "Email of the invited collaborator"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "editor",
+        "reviewer",
+        "viewer"
+      ],
+      "default": "reviewer",
+      "description": "editor: can edit triggers, reviewer: can comment/approve, viewer: can only view"
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "can_edit_triggers": {
+          "type": "boolean",
+          "default": false
+        },
+        "can_comment": {
+          "type": "boolean",
+          "default": true
+        },
+        "can_approve": {
+          "type": "boolean",
+          "default": false
+        },
+        "specific_trigger_indices": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "If set, limits access to specific triggers only"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "declined"
+      ],
+      "default": "pending"
+    },
+    "invited_by": {
+      "type": "string",
+      "description": "Email of person who sent invitation"
+    },
+    "invitation_message": {
+      "type": "string",
+      "description": "Custom message from inviter"
+    }
+  },
+  "required": [
+    "episode_id",
+    "collaborator_email",
+    "invited_by"
+  ]
+}

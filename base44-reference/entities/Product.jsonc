@@ -1,0 +1,59 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Product image URL"
+    },
+    "model_url": {
+      "type": "string",
+      "description": "3D model .glb file URL"
+    },
+    "model_embed_code": {
+      "type": "string",
+      "description": "Embedded 3D viewer code (iframe or script)"
+    },
+    "price": {
+      "type": "string",
+      "description": "Display price"
+    },
+    "sku": {
+      "type": "string",
+      "description": "SKU identifier"
+    },
+    "inventory": {
+      "type": "number",
+      "default": 0,
+      "description": "Current inventory count"
+    },
+    "character_quote": {
+      "type": "string",
+      "description": "Character tie-in quote"
+    },
+    "shop_url": {
+      "type": "string",
+      "description": "External shop link"
+    },
+    "character_tag": {
+      "type": "string",
+      "description": "Character assignment"
+    },
+    "is_limited_edition": {
+      "type": "boolean",
+      "default": false
+    },
+    "theme_color": {
+      "type": "string",
+      "default": "#8B5CF6"
+    }
+  },
+  "required": [
+    "name",
+    "price"
+  ]
+}

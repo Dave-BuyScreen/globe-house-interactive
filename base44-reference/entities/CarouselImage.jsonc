@@ -1,0 +1,81 @@
+{
+  "name": "CarouselImage",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title of the carousel image"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description or tagline"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Primary / desktop crop image URL (16:9)"
+    },
+    "image_url_mobile": {
+      "type": "string",
+      "description": "Mobile crop image URL (9:16)"
+    },
+    "image_url_tablet": {
+      "type": "string",
+      "description": "Tablet crop image URL (4:3)"
+    },
+    "link_url": {
+      "type": "string",
+      "description": "URL to navigate to when the image is clicked"
+    },
+    "order": {
+      "type": "number",
+      "default": 0,
+      "description": "Display order in the carousel"
+    },
+    "title_font": {
+      "type": "string",
+      "description": "Font family for the slide title"
+    },
+    "title_color": {
+      "type": "string",
+      "description": "Hex color for the slide title text"
+    },
+    "title_size": {
+      "type": "string",
+      "description": "Size preset for the slide title (sm, md, lg, xl)"
+    },
+    "title_italic": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the slide title is italic"
+    },
+    "title_letter_spacing": {
+      "type": "string",
+      "description": "Letter-spacing (tracking) for the slide title, as an em value (e.g. 0.05em)"
+    },
+    "description_font": {
+      "type": "string",
+      "description": "Font family for the slide description"
+    },
+    "description_color": {
+      "type": "string",
+      "description": "Hex color for the slide description text"
+    },
+    "description_size": {
+      "type": "string",
+      "description": "Size preset for the slide description (sm, md, lg, xl)"
+    },
+    "description_italic": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the slide description (tagline) is italic"
+    },
+    "description_letter_spacing": {
+      "type": "string",
+      "description": "Letter-spacing (tracking) for the slide description, as an em value (e.g. 0.05em)"
+    }
+  },
+  "required": [
+    "title",
+    "image_url"
+  ]
+}
