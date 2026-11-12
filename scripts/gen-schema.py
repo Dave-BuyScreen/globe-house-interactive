@@ -40,6 +40,9 @@ for f in sorted(glob.glob('base44-reference/entities/*.jsonc')):
         typ = coltype(p); d = lit(p.get('default'), typ)
         cols.append(f'  "{k}" {typ}' + (f' default {d}' if d else ''))
     out.append(f'create table if not exists public."{tbl}" (\n' + ',\n'.join(cols) + '\n);')
+    # Table may pre-exist with fewer columns: add any that are missing
+    for c in cols[1:]:
+        out.append(f'alter table public."{tbl}" add column if not exists {c.strip()};')
     kind = 'private' if name in PRIVATE else 'public'
     own_email = 'user_email' in e['properties']
     anon = name in ANON_INSERT

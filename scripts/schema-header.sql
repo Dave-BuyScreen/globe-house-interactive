@@ -1,3 +1,13 @@
+-- An earlier rebuild left a differently shaped site_settings table. Keep it (renamed) instead of dropping it.
+do $$ begin
+  if to_regclass('public.site_settings') is not null and not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'site_settings' and column_name = 'created_by_id'
+  ) then
+    alter table public.site_settings rename to site_settings_legacy;
+  end if;
+end $$;
+
 -- Users: Base44 "User" entity -> profiles table keyed by auth.users.id
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -7,6 +17,12 @@ create table if not exists public.profiles (
   created_date timestamptz not null default now(),
   updated_date timestamptz not null default now()
 );
+-- profiles may already exist from the earlier rebuild; add whatever it is missing
+alter table public.profiles add column if not exists email text;
+alter table public.profiles add column if not exists full_name text;
+alter table public.profiles add column if not exists role text not null default 'user';
+alter table public.profiles add column if not exists created_date timestamptz not null default now();
+alter table public.profiles add column if not exists updated_date timestamptz not null default now();
 alter table public.profiles enable row level security;
 
 create or replace function public.gh_is_staff() returns boolean

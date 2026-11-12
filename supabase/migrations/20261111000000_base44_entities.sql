@@ -1,3 +1,13 @@
+-- An earlier rebuild left a differently shaped site_settings table. Keep it (renamed) instead of dropping it.
+do $$ begin
+  if to_regclass('public.site_settings') is not null and not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'site_settings' and column_name = 'created_by_id'
+  ) then
+    alter table public.site_settings rename to site_settings_legacy;
+  end if;
+end $$;
+
 -- Users: Base44 "User" entity -> profiles table keyed by auth.users.id
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -7,6 +17,12 @@ create table if not exists public.profiles (
   created_date timestamptz not null default now(),
   updated_date timestamptz not null default now()
 );
+-- profiles may already exist from the earlier rebuild; add whatever it is missing
+alter table public.profiles add column if not exists email text;
+alter table public.profiles add column if not exists full_name text;
+alter table public.profiles add column if not exists role text not null default 'user';
+alter table public.profiles add column if not exists created_date timestamptz not null default now();
+alter table public.profiles add column if not exists updated_date timestamptz not null default now();
 alter table public.profiles enable row level security;
 
 create or replace function public.gh_is_staff() returns boolean
@@ -87,6 +103,27 @@ create table if not exists public."carousel_image" (
   "description_italic" boolean default false,
   "description_letter_spacing" text
 );
+alter table public."carousel_image" add column if not exists created_date timestamptz not null default now();
+alter table public."carousel_image" add column if not exists updated_date timestamptz not null default now();
+alter table public."carousel_image" add column if not exists created_by text;
+alter table public."carousel_image" add column if not exists created_by_id uuid;
+alter table public."carousel_image" add column if not exists "title" text;
+alter table public."carousel_image" add column if not exists "description" text;
+alter table public."carousel_image" add column if not exists "image_url" text;
+alter table public."carousel_image" add column if not exists "image_url_mobile" text;
+alter table public."carousel_image" add column if not exists "image_url_tablet" text;
+alter table public."carousel_image" add column if not exists "link_url" text;
+alter table public."carousel_image" add column if not exists "order" double precision default 0;
+alter table public."carousel_image" add column if not exists "title_font" text;
+alter table public."carousel_image" add column if not exists "title_color" text;
+alter table public."carousel_image" add column if not exists "title_size" text;
+alter table public."carousel_image" add column if not exists "title_italic" boolean default false;
+alter table public."carousel_image" add column if not exists "title_letter_spacing" text;
+alter table public."carousel_image" add column if not exists "description_font" text;
+alter table public."carousel_image" add column if not exists "description_color" text;
+alter table public."carousel_image" add column if not exists "description_size" text;
+alter table public."carousel_image" add column if not exists "description_italic" boolean default false;
+alter table public."carousel_image" add column if not exists "description_letter_spacing" text;
 
 create table if not exists public."channel_content_library" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -106,6 +143,21 @@ create table if not exists public."channel_content_library" (
   "release_date" text,
   "allowed_time_blocks" jsonb
 );
+alter table public."channel_content_library" add column if not exists created_date timestamptz not null default now();
+alter table public."channel_content_library" add column if not exists updated_date timestamptz not null default now();
+alter table public."channel_content_library" add column if not exists created_by text;
+alter table public."channel_content_library" add column if not exists created_by_id uuid;
+alter table public."channel_content_library" add column if not exists "title" text;
+alter table public."channel_content_library" add column if not exists "description" text;
+alter table public."channel_content_library" add column if not exists "vimeo_embed_url" text;
+alter table public."channel_content_library" add column if not exists "duration_seconds" double precision;
+alter table public."channel_content_library" add column if not exists "thumbnail" text;
+alter table public."channel_content_library" add column if not exists "category" text default 'other';
+alter table public."channel_content_library" add column if not exists "tags" jsonb;
+alter table public."channel_content_library" add column if not exists "priority_score" double precision default 5;
+alter table public."channel_content_library" add column if not exists "is_featured" boolean default false;
+alter table public."channel_content_library" add column if not exists "release_date" text;
+alter table public."channel_content_library" add column if not exists "allowed_time_blocks" jsonb;
 
 create table if not exists public."creator" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -127,6 +179,23 @@ create table if not exists public."creator" (
   "total_earnings" double precision default 0,
   "notes" text
 );
+alter table public."creator" add column if not exists created_date timestamptz not null default now();
+alter table public."creator" add column if not exists updated_date timestamptz not null default now();
+alter table public."creator" add column if not exists created_by text;
+alter table public."creator" add column if not exists created_by_id uuid;
+alter table public."creator" add column if not exists "display_name" text;
+alter table public."creator" add column if not exists "full_name" text;
+alter table public."creator" add column if not exists "bio" text;
+alter table public."creator" add column if not exists "avatar_url" text;
+alter table public."creator" add column if not exists "contact_email" text;
+alter table public."creator" add column if not exists "stripe_account_id" text;
+alter table public."creator" add column if not exists "default_commission_rate" double precision default 0.1;
+alter table public."creator" add column if not exists "commission_model" text default 'percentage';
+alter table public."creator" add column if not exists "flat_fee_amount" double precision;
+alter table public."creator" add column if not exists "status" text default 'pending';
+alter table public."creator" add column if not exists "onboarding_completed" boolean default false;
+alter table public."creator" add column if not exists "total_earnings" double precision default 0;
+alter table public."creator" add column if not exists "notes" text;
 
 create table if not exists public."episode" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -148,6 +217,23 @@ create table if not exists public."episode" (
   "assigned_floors" jsonb default '[]'::jsonb,
   "triggers" jsonb
 );
+alter table public."episode" add column if not exists created_date timestamptz not null default now();
+alter table public."episode" add column if not exists updated_date timestamptz not null default now();
+alter table public."episode" add column if not exists created_by text;
+alter table public."episode" add column if not exists created_by_id uuid;
+alter table public."episode" add column if not exists "title" text;
+alter table public."episode" add column if not exists "vimeo_url" text;
+alter table public."episode" add column if not exists "youtube_url" text;
+alter table public."episode" add column if not exists "thumbnail_url" text;
+alter table public."episode" add column if not exists "summary" text;
+alter table public."episode" add column if not exists "keywords" jsonb;
+alter table public."episode" add column if not exists "theme_color" text default '#8B5CF6';
+alter table public."episode" add column if not exists "status" text default 'draft';
+alter table public."episode" add column if not exists "platform" text default 'globehouse';
+alter table public."episode" add column if not exists "marketplace_category" text default 'other';
+alter table public."episode" add column if not exists "category" text default 'other';
+alter table public."episode" add column if not exists "assigned_floors" jsonb default '[]'::jsonb;
+alter table public."episode" add column if not exists "triggers" jsonb;
 
 create table if not exists public."episode_collaborator" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -163,6 +249,17 @@ create table if not exists public."episode_collaborator" (
   "invited_by" text,
   "invitation_message" text
 );
+alter table public."episode_collaborator" add column if not exists created_date timestamptz not null default now();
+alter table public."episode_collaborator" add column if not exists updated_date timestamptz not null default now();
+alter table public."episode_collaborator" add column if not exists created_by text;
+alter table public."episode_collaborator" add column if not exists created_by_id uuid;
+alter table public."episode_collaborator" add column if not exists "episode_id" text;
+alter table public."episode_collaborator" add column if not exists "collaborator_email" text;
+alter table public."episode_collaborator" add column if not exists "role" text default 'reviewer';
+alter table public."episode_collaborator" add column if not exists "permissions" jsonb;
+alter table public."episode_collaborator" add column if not exists "status" text default 'pending';
+alter table public."episode_collaborator" add column if not exists "invited_by" text;
+alter table public."episode_collaborator" add column if not exists "invitation_message" text;
 
 create table if not exists public."founders_certificate" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -179,6 +276,18 @@ create table if not exists public."founders_certificate" (
   "founders_royalty" double precision default 5,
   "notes" text
 );
+alter table public."founders_certificate" add column if not exists created_date timestamptz not null default now();
+alter table public."founders_certificate" add column if not exists updated_date timestamptz not null default now();
+alter table public."founders_certificate" add column if not exists created_by text;
+alter table public."founders_certificate" add column if not exists created_by_id uuid;
+alter table public."founders_certificate" add column if not exists "serial_number" text;
+alter table public."founders_certificate" add column if not exists "founder_name" text;
+alter table public."founders_certificate" add column if not exists "issue_date" text;
+alter table public."founders_certificate" add column if not exists "status" text default 'Active';
+alter table public."founders_certificate" add column if not exists "tier" text;
+alter table public."founders_certificate" add column if not exists "ar_bonus_percentage" double precision;
+alter table public."founders_certificate" add column if not exists "founders_royalty" double precision default 5;
+alter table public."founders_certificate" add column if not exists "notes" text;
 
 create table if not exists public."live_channel" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -191,6 +300,14 @@ create table if not exists public."live_channel" (
   "description" text,
   "is_live" boolean default false
 );
+alter table public."live_channel" add column if not exists created_date timestamptz not null default now();
+alter table public."live_channel" add column if not exists updated_date timestamptz not null default now();
+alter table public."live_channel" add column if not exists created_by text;
+alter table public."live_channel" add column if not exists created_by_id uuid;
+alter table public."live_channel" add column if not exists "title" text;
+alter table public."live_channel" add column if not exists "vimeo_embed_url" text;
+alter table public."live_channel" add column if not exists "description" text;
+alter table public."live_channel" add column if not exists "is_live" boolean default false;
 
 create table if not exists public."live_channel_schedule" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -211,6 +328,22 @@ create table if not exists public."live_channel_schedule" (
   "product_id" text,
   "product_link" text
 );
+alter table public."live_channel_schedule" add column if not exists created_date timestamptz not null default now();
+alter table public."live_channel_schedule" add column if not exists updated_date timestamptz not null default now();
+alter table public."live_channel_schedule" add column if not exists created_by text;
+alter table public."live_channel_schedule" add column if not exists created_by_id uuid;
+alter table public."live_channel_schedule" add column if not exists "title" text;
+alter table public."live_channel_schedule" add column if not exists "description" text;
+alter table public."live_channel_schedule" add column if not exists "vimeo_embed_url" text;
+alter table public."live_channel_schedule" add column if not exists "start_time" text;
+alter table public."live_channel_schedule" add column if not exists "end_time" text;
+alter table public."live_channel_schedule" add column if not exists "duration_minutes" double precision;
+alter table public."live_channel_schedule" add column if not exists "thumbnail" text;
+alter table public."live_channel_schedule" add column if not exists "category" text default 'other';
+alter table public."live_channel_schedule" add column if not exists "ar_trigger_enabled" boolean default false;
+alter table public."live_channel_schedule" add column if not exists "trigger_timestamp" double precision;
+alter table public."live_channel_schedule" add column if not exists "product_id" text;
+alter table public."live_channel_schedule" add column if not exists "product_link" text;
 
 create table if not exists public."merchant" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -236,6 +369,27 @@ create table if not exists public."merchant" (
   "onboarding_completed" boolean default false,
   "notes" text
 );
+alter table public."merchant" add column if not exists created_date timestamptz not null default now();
+alter table public."merchant" add column if not exists updated_date timestamptz not null default now();
+alter table public."merchant" add column if not exists created_by text;
+alter table public."merchant" add column if not exists created_by_id uuid;
+alter table public."merchant" add column if not exists "company_name" text;
+alter table public."merchant" add column if not exists "legal_name" text;
+alter table public."merchant" add column if not exists "tax_id" text;
+alter table public."merchant" add column if not exists "stripe_account_id" text;
+alter table public."merchant" add column if not exists "contact_email" text;
+alter table public."merchant" add column if not exists "website" text;
+alter table public."merchant" add column if not exists "logo_url" text;
+alter table public."merchant" add column if not exists "category" text default 'other';
+alter table public."merchant" add column if not exists "status" text default 'pending';
+alter table public."merchant" add column if not exists "verification_status" text default 'unverified';
+alter table public."merchant" add column if not exists "verification_notes" text;
+alter table public."merchant" add column if not exists "verified_at" text;
+alter table public."merchant" add column if not exists "verified_by" text;
+alter table public."merchant" add column if not exists "platform_fee_override" double precision;
+alter table public."merchant" add column if not exists "subscription_tier" text default 'free';
+alter table public."merchant" add column if not exists "onboarding_completed" boolean default false;
+alter table public."merchant" add column if not exists "notes" text;
 
 create table if not exists public."notification" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -250,6 +404,16 @@ create table if not exists public."notification" (
   "episode_id" text,
   "read" boolean default false
 );
+alter table public."notification" add column if not exists created_date timestamptz not null default now();
+alter table public."notification" add column if not exists updated_date timestamptz not null default now();
+alter table public."notification" add column if not exists created_by text;
+alter table public."notification" add column if not exists created_by_id uuid;
+alter table public."notification" add column if not exists "user_email" text;
+alter table public."notification" add column if not exists "type" text default 'general';
+alter table public."notification" add column if not exists "title" text;
+alter table public."notification" add column if not exists "message" text;
+alter table public."notification" add column if not exists "episode_id" text;
+alter table public."notification" add column if not exists "read" boolean default false;
 
 create table if not exists public."order" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -268,6 +432,20 @@ create table if not exists public."order" (
   "status" text default 'pending',
   "customer_name" text
 );
+alter table public."order" add column if not exists created_date timestamptz not null default now();
+alter table public."order" add column if not exists updated_date timestamptz not null default now();
+alter table public."order" add column if not exists created_by text;
+alter table public."order" add column if not exists created_by_id uuid;
+alter table public."order" add column if not exists "user_email" text;
+alter table public."order" add column if not exists "product_name" text;
+alter table public."order" add column if not exists "product_description" text;
+alter table public."order" add column if not exists "amount" double precision;
+alter table public."order" add column if not exists "currency" text default 'usd';
+alter table public."order" add column if not exists "stripe_payment_intent_id" text;
+alter table public."order" add column if not exists "episode_id" text;
+alter table public."order" add column if not exists "trigger_timestamp" double precision;
+alter table public."order" add column if not exists "status" text default 'pending';
+alter table public."order" add column if not exists "customer_name" text;
 
 create table if not exists public."platform_settings" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -282,6 +460,16 @@ create table if not exists public."platform_settings" (
   "platform_name" text default 'BuyScreen',
   "support_email" text
 );
+alter table public."platform_settings" add column if not exists created_date timestamptz not null default now();
+alter table public."platform_settings" add column if not exists updated_date timestamptz not null default now();
+alter table public."platform_settings" add column if not exists created_by text;
+alter table public."platform_settings" add column if not exists created_by_id uuid;
+alter table public."platform_settings" add column if not exists "platform_fee_rate" double precision default 0.05;
+alter table public."platform_settings" add column if not exists "default_creator_commission_rate" double precision default 0.1;
+alter table public."platform_settings" add column if not exists "stripe_connect_enabled" boolean default false;
+alter table public."platform_settings" add column if not exists "subscription_tiers" jsonb;
+alter table public."platform_settings" add column if not exists "platform_name" text default 'BuyScreen';
+alter table public."platform_settings" add column if not exists "support_email" text;
 
 create table if not exists public."portal_analytics" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -294,6 +482,14 @@ create table if not exists public."portal_analytics" (
   "trigger_timestamp" double precision,
   "metadata" text
 );
+alter table public."portal_analytics" add column if not exists created_date timestamptz not null default now();
+alter table public."portal_analytics" add column if not exists updated_date timestamptz not null default now();
+alter table public."portal_analytics" add column if not exists created_by text;
+alter table public."portal_analytics" add column if not exists created_by_id uuid;
+alter table public."portal_analytics" add column if not exists "episode_id" text;
+alter table public."portal_analytics" add column if not exists "event_type" text;
+alter table public."portal_analytics" add column if not exists "trigger_timestamp" double precision;
+alter table public."portal_analytics" add column if not exists "metadata" text;
 
 create table if not exists public."product" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -314,6 +510,22 @@ create table if not exists public."product" (
   "is_limited_edition" boolean default false,
   "theme_color" text default '#8B5CF6'
 );
+alter table public."product" add column if not exists created_date timestamptz not null default now();
+alter table public."product" add column if not exists updated_date timestamptz not null default now();
+alter table public."product" add column if not exists created_by text;
+alter table public."product" add column if not exists created_by_id uuid;
+alter table public."product" add column if not exists "name" text;
+alter table public."product" add column if not exists "image_url" text;
+alter table public."product" add column if not exists "model_url" text;
+alter table public."product" add column if not exists "model_embed_code" text;
+alter table public."product" add column if not exists "price" text;
+alter table public."product" add column if not exists "sku" text;
+alter table public."product" add column if not exists "inventory" double precision default 0;
+alter table public."product" add column if not exists "character_quote" text;
+alter table public."product" add column if not exists "shop_url" text;
+alter table public."product" add column if not exists "character_tag" text;
+alter table public."product" add column if not exists "is_limited_edition" boolean default false;
+alter table public."product" add column if not exists "theme_color" text default '#8B5CF6';
 
 create table if not exists public."product_registry" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -348,6 +560,36 @@ create table if not exists public."product_registry" (
   "total_revenue" double precision default 0,
   "total_sales" double precision default 0
 );
+alter table public."product_registry" add column if not exists created_date timestamptz not null default now();
+alter table public."product_registry" add column if not exists updated_date timestamptz not null default now();
+alter table public."product_registry" add column if not exists created_by text;
+alter table public."product_registry" add column if not exists created_by_id uuid;
+alter table public."product_registry" add column if not exists "merchant_id" text;
+alter table public."product_registry" add column if not exists "name" text;
+alter table public."product_registry" add column if not exists "brand" text;
+alter table public."product_registry" add column if not exists "description" text;
+alter table public."product_registry" add column if not exists "short_description" text;
+alter table public."product_registry" add column if not exists "price" double precision;
+alter table public."product_registry" add column if not exists "display_price" text;
+alter table public."product_registry" add column if not exists "sku" text;
+alter table public."product_registry" add column if not exists "inventory" double precision default 0;
+alter table public."product_registry" add column if not exists "inventory_status" text default 'in_stock';
+alter table public."product_registry" add column if not exists "image_url" text;
+alter table public."product_registry" add column if not exists "additional_images" jsonb;
+alter table public."product_registry" add column if not exists "category" text default 'other';
+alter table public."product_registry" add column if not exists "product_url" text;
+alter table public."product_registry" add column if not exists "model_url" text;
+alter table public."product_registry" add column if not exists "character_quote" text;
+alter table public."product_registry" add column if not exists "is_active" boolean default false;
+alter table public."product_registry" add column if not exists "approval_status" text default 'pending';
+alter table public."product_registry" add column if not exists "approval_notes" text;
+alter table public."product_registry" add column if not exists "approved_at" text;
+alter table public."product_registry" add column if not exists "approved_by" text;
+alter table public."product_registry" add column if not exists "is_featured" boolean default false;
+alter table public."product_registry" add column if not exists "tags" jsonb;
+alter table public."product_registry" add column if not exists "migrated_from_episode" text;
+alter table public."product_registry" add column if not exists "total_revenue" double precision default 0;
+alter table public."product_registry" add column if not exists "total_sales" double precision default 0;
 
 create table if not exists public."saved_episode" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -358,6 +600,12 @@ create table if not exists public."saved_episode" (
   "user_email" text,
   "episode_id" text
 );
+alter table public."saved_episode" add column if not exists created_date timestamptz not null default now();
+alter table public."saved_episode" add column if not exists updated_date timestamptz not null default now();
+alter table public."saved_episode" add column if not exists created_by text;
+alter table public."saved_episode" add column if not exists created_by_id uuid;
+alter table public."saved_episode" add column if not exists "user_email" text;
+alter table public."saved_episode" add column if not exists "episode_id" text;
 
 create table if not exists public."site_settings" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -382,6 +630,26 @@ create table if not exists public."site_settings" (
   "row_labels" jsonb,
   "floors_config" jsonb
 );
+alter table public."site_settings" add column if not exists created_date timestamptz not null default now();
+alter table public."site_settings" add column if not exists updated_date timestamptz not null default now();
+alter table public."site_settings" add column if not exists created_by text;
+alter table public."site_settings" add column if not exists created_by_id uuid;
+alter table public."site_settings" add column if not exists "logo_url" text;
+alter table public."site_settings" add column if not exists "favicon_url" text;
+alter table public."site_settings" add column if not exists "heading_color" text default '#ffffff';
+alter table public."site_settings" add column if not exists "body_text_color" text default 'rgba(255,255,255,0.6)';
+alter table public."site_settings" add column if not exists "nav_text_color" text default 'rgba(255,255,255,0.5)';
+alter table public."site_settings" add column if not exists "accent_text_color" text default '#a78bfa';
+alter table public."site_settings" add column if not exists "card_text_color" text default '#ffffff';
+alter table public."site_settings" add column if not exists "text_color" text default '#ffffff';
+alter table public."site_settings" add column if not exists "gateway_tv_image" text;
+alter table public."site_settings" add column if not exists "gateway_buy_image" text;
+alter table public."site_settings" add column if not exists "gateway_tv_logo" text;
+alter table public."site_settings" add column if not exists "gateway_buy_logo" text;
+alter table public."site_settings" add column if not exists "intro_desktop_video_url" text;
+alter table public."site_settings" add column if not exists "intro_mobile_video_url" text;
+alter table public."site_settings" add column if not exists "row_labels" jsonb;
+alter table public."site_settings" add column if not exists "floors_config" jsonb;
 
 create table if not exists public."transaction" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -410,6 +678,30 @@ create table if not exists public."transaction" (
   "refund_amount" double precision default 0,
   "metadata" text
 );
+alter table public."transaction" add column if not exists created_date timestamptz not null default now();
+alter table public."transaction" add column if not exists updated_date timestamptz not null default now();
+alter table public."transaction" add column if not exists created_by text;
+alter table public."transaction" add column if not exists created_by_id uuid;
+alter table public."transaction" add column if not exists "stripe_payment_intent_id" text;
+alter table public."transaction" add column if not exists "stripe_transfer_id" text;
+alter table public."transaction" add column if not exists "customer_email" text;
+alter table public."transaction" add column if not exists "customer_name" text;
+alter table public."transaction" add column if not exists "merchant_id" text;
+alter table public."transaction" add column if not exists "creator_id" text;
+alter table public."transaction" add column if not exists "product_id" text;
+alter table public."transaction" add column if not exists "episode_id" text;
+alter table public."transaction" add column if not exists "trigger_timestamp" double precision;
+alter table public."transaction" add column if not exists "gross_amount" double precision;
+alter table public."transaction" add column if not exists "platform_fee" double precision;
+alter table public."transaction" add column if not exists "platform_fee_rate" double precision;
+alter table public."transaction" add column if not exists "creator_commission" double precision;
+alter table public."transaction" add column if not exists "creator_commission_rate" double precision;
+alter table public."transaction" add column if not exists "merchant_payout" double precision;
+alter table public."transaction" add column if not exists "currency" text default 'usd';
+alter table public."transaction" add column if not exists "status" text default 'pending';
+alter table public."transaction" add column if not exists "refund_status" text default 'none';
+alter table public."transaction" add column if not exists "refund_amount" double precision default 0;
+alter table public."transaction" add column if not exists "metadata" text;
 
 create table if not exists public."trigger_approval" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -424,6 +716,16 @@ create table if not exists public."trigger_approval" (
   "status" text,
   "feedback" text
 );
+alter table public."trigger_approval" add column if not exists created_date timestamptz not null default now();
+alter table public."trigger_approval" add column if not exists updated_date timestamptz not null default now();
+alter table public."trigger_approval" add column if not exists created_by text;
+alter table public."trigger_approval" add column if not exists created_by_id uuid;
+alter table public."trigger_approval" add column if not exists "episode_id" text;
+alter table public."trigger_approval" add column if not exists "trigger_index" double precision;
+alter table public."trigger_approval" add column if not exists "approver_email" text;
+alter table public."trigger_approval" add column if not exists "approver_name" text;
+alter table public."trigger_approval" add column if not exists "status" text;
+alter table public."trigger_approval" add column if not exists "feedback" text;
 
 create table if not exists public."trigger_comment" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -440,6 +742,18 @@ create table if not exists public."trigger_comment" (
   "resolved" boolean default false,
   "parent_comment_id" text
 );
+alter table public."trigger_comment" add column if not exists created_date timestamptz not null default now();
+alter table public."trigger_comment" add column if not exists updated_date timestamptz not null default now();
+alter table public."trigger_comment" add column if not exists created_by text;
+alter table public."trigger_comment" add column if not exists created_by_id uuid;
+alter table public."trigger_comment" add column if not exists "episode_id" text;
+alter table public."trigger_comment" add column if not exists "trigger_index" double precision;
+alter table public."trigger_comment" add column if not exists "author_email" text;
+alter table public."trigger_comment" add column if not exists "author_name" text;
+alter table public."trigger_comment" add column if not exists "comment_text" text;
+alter table public."trigger_comment" add column if not exists "comment_type" text default 'general';
+alter table public."trigger_comment" add column if not exists "resolved" boolean default false;
+alter table public."trigger_comment" add column if not exists "parent_comment_id" text;
 
 create table if not exists public."video_object_mapping" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -464,6 +778,26 @@ create table if not exists public."video_object_mapping" (
   "shop_url" text,
   "status" text default 'draft'
 );
+alter table public."video_object_mapping" add column if not exists created_date timestamptz not null default now();
+alter table public."video_object_mapping" add column if not exists updated_date timestamptz not null default now();
+alter table public."video_object_mapping" add column if not exists created_by text;
+alter table public."video_object_mapping" add column if not exists created_by_id uuid;
+alter table public."video_object_mapping" add column if not exists "episode_id" text;
+alter table public."video_object_mapping" add column if not exists "object_id" text;
+alter table public."video_object_mapping" add column if not exists "label" text;
+alter table public."video_object_mapping" add column if not exists "zone_h" text;
+alter table public."video_object_mapping" add column if not exists "zone_v" text;
+alter table public."video_object_mapping" add column if not exists "bounding_box" jsonb;
+alter table public."video_object_mapping" add column if not exists "anchor_point" jsonb;
+alter table public."video_object_mapping" add column if not exists "start_time" double precision;
+alter table public."video_object_mapping" add column if not exists "end_time" double precision;
+alter table public."video_object_mapping" add column if not exists "z_index" double precision default 0;
+alter table public."video_object_mapping" add column if not exists "product_id" text;
+alter table public."video_object_mapping" add column if not exists "product_name" text;
+alter table public."video_object_mapping" add column if not exists "product_price" text;
+alter table public."video_object_mapping" add column if not exists "product_image_url" text;
+alter table public."video_object_mapping" add column if not exists "shop_url" text;
+alter table public."video_object_mapping" add column if not exists "status" text default 'draft';
 
 create table if not exists public."video_processing_job" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -481,6 +815,19 @@ create table if not exists public."video_processing_job" (
   "started_at" text,
   "completed_at" text
 );
+alter table public."video_processing_job" add column if not exists created_date timestamptz not null default now();
+alter table public."video_processing_job" add column if not exists updated_date timestamptz not null default now();
+alter table public."video_processing_job" add column if not exists created_by text;
+alter table public."video_processing_job" add column if not exists created_by_id uuid;
+alter table public."video_processing_job" add column if not exists "episode_id" text;
+alter table public."video_processing_job" add column if not exists "source_video_url" text;
+alter table public."video_processing_job" add column if not exists "status" text default 'queued';
+alter table public."video_processing_job" add column if not exists "progress" double precision default 0;
+alter table public."video_processing_job" add column if not exists "output_formats" jsonb;
+alter table public."video_processing_job" add column if not exists "metadata" jsonb;
+alter table public."video_processing_job" add column if not exists "error_message" text;
+alter table public."video_processing_job" add column if not exists "started_at" text;
+alter table public."video_processing_job" add column if not exists "completed_at" text;
 
 create table if not exists public."wishlist_item" (
   id text primary key default replace(gen_random_uuid()::text, '-', ''),
@@ -499,6 +846,20 @@ create table if not exists public."wishlist_item" (
   "shop_url" text,
   "trigger_timestamp" double precision
 );
+alter table public."wishlist_item" add column if not exists created_date timestamptz not null default now();
+alter table public."wishlist_item" add column if not exists updated_date timestamptz not null default now();
+alter table public."wishlist_item" add column if not exists created_by text;
+alter table public."wishlist_item" add column if not exists created_by_id uuid;
+alter table public."wishlist_item" add column if not exists "user_email" text;
+alter table public."wishlist_item" add column if not exists "episode_id" text;
+alter table public."wishlist_item" add column if not exists "episode_title" text;
+alter table public."wishlist_item" add column if not exists "product_name" text;
+alter table public."wishlist_item" add column if not exists "product_brand" text;
+alter table public."wishlist_item" add column if not exists "product_price" text;
+alter table public."wishlist_item" add column if not exists "product_image_url" text;
+alter table public."wishlist_item" add column if not exists "product_description" text;
+alter table public."wishlist_item" add column if not exists "shop_url" text;
+alter table public."wishlist_item" add column if not exists "trigger_timestamp" double precision;
 
 -- RLS, policies and meta trigger for every Base44 table
 do $$
