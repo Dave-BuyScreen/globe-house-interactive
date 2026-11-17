@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Shield, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
 function generateHash(serial, name, date) {

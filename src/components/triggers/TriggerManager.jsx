@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, Edit2, Save, X, Clock, Package, Video, Box } from "lucide-react";
+import { Plus, Trash2, Save, X, Clock, Package, Video, Box } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function TriggerManager({ episodeId, isOpen, onClose }) {

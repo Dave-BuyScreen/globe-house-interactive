@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Plus, Play, Pause, Volume2, Settings, Maximize, ShoppingBag, MousePointerClick, ShieldCheck, BarChart3, ArrowRight } from "lucide-react";
+import { ShoppingCart, Plus, Play, Volume2, Settings, Maximize, ShoppingBag, MousePointerClick, ShieldCheck, BarChart3, ArrowRight } from "lucide-react";
 
 const PRODUCT_PINS = [
   { id: "sunglasses", x: 30, y: 28, name: "Aviator Sunglasses", price: "$129.00" },

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, TrendingDown } from "lucide-react";
+import { TrendingDown } from "lucide-react";
 
 export default function FunnelChart({ data }) {
   const stages = [

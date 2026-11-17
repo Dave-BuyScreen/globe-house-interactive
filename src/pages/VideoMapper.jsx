@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, SkipBack, SkipForward, Crosshair, CheckCircle2, ArrowLeft, Eye } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Crosshair, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";

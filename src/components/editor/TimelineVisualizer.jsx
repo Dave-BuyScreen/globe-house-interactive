@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Clock, MessageSquare, ShoppingBag } from "lucide-react";
+import { Clock, MessageSquare, ShoppingBag } from "lucide-react";
 
 export default function TimelineVisualizer({ triggers = [], duration = 120, onAddTrigger, onSelectTrigger }) {
   const [hoverTime, setHoverTime] = useState(null);

@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "../utils";
 import { Link } from "react-router-dom";
-import { Bookmark, ExternalLink, Trash2, ShoppingBag, Play } from "lucide-react";
+import { Bookmark, Trash2, ShoppingBag, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";

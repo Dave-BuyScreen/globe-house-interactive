@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { floorName } from "./floors";
 
 export default function ElevatorIndicator({ floors, activeKey, rowLabels, onJump, activeFloor }) {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, Eye, MousePointer, ShoppingCart, Clock } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 
 export default function EpisodeMetricsCard({ title, value, subtitle, trend, icon: Icon, color }) {
   const trendIsPositive = trend > 0;

@@ -1,6 +1,5 @@
 import React from "react";
 import { Trash2, CheckCircle, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function MappingObjectList({ mappings, onDelete, onConfirm }) {
   if (!mappings.length) {

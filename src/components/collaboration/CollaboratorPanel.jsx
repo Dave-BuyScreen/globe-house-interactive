@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserPlus, Mail, Check, X, Loader2, Users, Trash2 } from "lucide-react";
+import { UserPlus, Mail, Loader2, Users, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function CollaboratorPanel({ episodeId, episodeTitle, triggerCount }) {

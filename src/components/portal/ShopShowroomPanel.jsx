@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShoppingBag, Play } from "lucide-react";
+import { X, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ARViewer from "./ARViewer";
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Shield, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { format } from "date-fns";
 
 export default function FoundersRegistry() {

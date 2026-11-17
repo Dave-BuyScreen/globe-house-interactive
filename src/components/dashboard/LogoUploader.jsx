@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Upload, X, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function LogoUploader({ currentLogo, settingsId }) {
   const [uploading, setUploading] = useState(false);

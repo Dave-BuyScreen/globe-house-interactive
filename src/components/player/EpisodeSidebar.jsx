@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ShoppingBag, Video, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export default function EpisodeSidebar({ 

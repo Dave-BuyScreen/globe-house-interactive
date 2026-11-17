@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShoppingBag, ExternalLink, Box, Bookmark, BookmarkCheck, CreditCard } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { X, ShoppingBag, ExternalLink, Box, Bookmark, BookmarkCheck } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Elements } from "@stripe/react-stripe-js";
