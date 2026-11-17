@@ -3,8 +3,16 @@
 // did on Base44; this file translates those calls to Supabase tables, auth, storage
 // and edge functions.
 import { supabase } from '@/lib/supabase';
-import entityTables from './entity-tables.json';
-import entityColumns from './entity-columns.json';
+import baseTables from './entity-tables.json';
+import baseColumns from './entity-columns.json';
+import extensions from './entity-extensions.json';
+
+// Base44 entities plus tables added after the port (viewer tiers, ads).
+const entityTables = { ...baseTables, ...extensions.tables };
+const entityColumns = Object.fromEntries(
+  [...new Set([...Object.keys(baseColumns), ...Object.keys(extensions.columns)])]
+    .map((k) => [k, [...(baseColumns[k] || []), ...(extensions.columns[k] || [])]]),
+);
 
 const requireClient = () => {
   if (!supabase) throw new Error('Supabase is not configured');
@@ -59,28 +67,45 @@ const clean = (name, row) => {
   return out;
 };
 
+// Locked episodes keep their video links in episode_media, which the database only returns to
+// viewers allowed to watch. Merge them back so pages see a normal episode; locked = no links.
+const attachEpisodeMedia = async (result) => {
+  const rows = (Array.isArray(result) ? result : [result])
+    .filter((r) => r && r.access_tier && r.access_tier !== 'free');
+  if (!rows.length) return result;
+  const { data } = await requireClient().from('episode_media')
+    .select('episode_id, vimeo_url, youtube_url').in('episode_id', rows.map((r) => r.id));
+  for (const m of data || []) {
+    const row = rows.find((r) => r.id === m.episode_id);
+    if (m.vimeo_url) row.vimeo_url = m.vimeo_url;
+    if (m.youtube_url) row.youtube_url = m.youtube_url;
+  }
+  return result;
+};
+
 const makeEntity = (name) => {
   const table = entityTables[name];
   if (!table) throw new Error(`Unknown entity: ${name}`);
   const from = () => requireClient().from(table);
+  const out = name === 'Episode' ? attachEpisodeMedia : (r) => r;
   return {
     async list(sort, limit, skip) {
       let q = applySort(from().select('*'), sort);
       if (limit) q = q.range(skip || 0, (skip || 0) + limit - 1);
-      return unwrap(await q);
+      return out(unwrap(await q));
     },
     async filter(query, sort, limit, skip) {
       let q = applySort(applyFilter(from().select('*'), query), sort);
       if (limit) q = q.range(skip || 0, (skip || 0) + limit - 1);
-      return unwrap(await q);
+      return out(unwrap(await q));
     },
     async get(id) {
       const row = unwrap(await from().select('*').eq('id', id).maybeSingle());
       if (!row) throw httpError(`${name} not found`, 404);
-      return row;
+      return out(row);
     },
     async create(data) {
-      return unwrap(await from().insert(clean(name, data)).select().single());
+      return out(unwrap(await from().insert(clean(name, data)).select().single()));
     },
     async bulkCreate(rows) {
       return unwrap(await from().insert((rows || []).map((r) => clean(name, r))).select());
@@ -89,7 +114,7 @@ const makeEntity = (name) => {
       // Base44 ignored unknown fields; if nothing real is left, just return the record.
       const row = clean(name, data);
       if (!Object.keys(row || {}).length) return this.get(id);
-      return unwrap(await from().update(row).eq('id', id).select().single());
+      return out(unwrap(await from().update(row).eq('id', id).select().single()));
     },
     async delete(id) {
       unwrap(await from().delete().eq('id', id));

@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import PlayerExperience from "../components/player/PlayerExperience";
+import Paywall from "../components/tiers/Paywall";
+import AdBreak from "../components/tiers/AdBreak";
+import TierBadge from "../components/tiers/TierBadge";
+import {
+  isLocked, tierOf, activeSubscription, useCurrentUser, useMyEntitlements,
+  useMonetizationSettings, useCheckoutReturn,
+} from "@/lib/viewerAccess";
 
 export default function Player() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -20,6 +27,24 @@ export default function Player() {
   });
 
   const episode = episodes?.[0];
+
+  // Viewer tiers: locked episodes show a paywall; free ones play a pre-roll ad for non-members.
+  const { data: user } = useCurrentUser();
+  const { data: entitlements = [] } = useMyEntitlements(user);
+  const { data: monetization = {} } = useMonetizationSettings();
+  const { data: ads = [] } = useQuery({
+    queryKey: ["activeAds"],
+    queryFn: () => base44.entities.AdCreative.filter({ active: true }),
+    staleTime: 60_000,
+  });
+  const locked = episode ? isLocked(episode, user) : false;
+  const checkoutState = useCheckoutReturn(!!episode && !locked);
+  const isStaff = ["admin", "editor"].includes(user?.role) && urlParams.get("preview") !== "user";
+  const wantsAd =
+    !!episode && !locked && tierOf(episode) === "free" && monetization.ads_enabled !== false &&
+    !activeSubscription(entitlements) && !isStaff &&
+    ads.some((a) => a.video_url || a.image_url);
+  const [adDone, setAdDone] = React.useState(false);
 
   if (isLoading) {
     return (
@@ -61,6 +86,7 @@ export default function Player() {
           <div>
             <h1 className="text-xl font-bold text-white">{episode.title}</h1>
             <div className="flex items-center gap-3 mt-1">
+              <TierBadge episode={episode} />
               <Badge className={`text-[10px] border-0 ${
                 episode.status === "published" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"
               }`}>
@@ -89,10 +115,21 @@ export default function Player() {
       </div>
 
       {/* Player with all overlays */}
-      <PlayerExperience episode={episode} />
+      {locked ? (
+        <Paywall episode={episode} user={user} checkoutState={checkoutState} />
+      ) : wantsAd && !adDone ? (
+        <AdBreak
+          ads={ads.filter((a) => a.video_url || a.image_url)}
+          episodeId={episode.id}
+          skipAfter={monetization.ad_skip_after_seconds ?? 5}
+          onDone={() => setAdDone(true)}
+        />
+      ) : (
+        <PlayerExperience episode={episode} />
+      )}
 
       {/* Trigger timeline */}
-      {triggerCount > 0 && (
+      {triggerCount > 0 && !locked && (
         <div className="mt-8">
           <h3 className="text-sm font-medium text-white/40 mb-4">Trigger Timeline</h3>
           <div className="space-y-2">

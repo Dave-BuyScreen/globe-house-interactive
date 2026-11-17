@@ -9,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import TriggerManager from "../triggers/TriggerManager";
+import TierBadge from "../tiers/TierBadge";
 
 // ratio: "poster" (2:3) | "landscape" (16:9)
 export default function EpisodeCard({ episode, index, ratio = "landscape" }) {
@@ -87,6 +88,7 @@ export default function EpisodeCard({ episode, index, ratio = "landscape" }) {
               )}
 
               {/* Hover overlay */}
+              <TierBadge episode={episode} className="absolute bottom-2 left-2 z-10" />
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                 <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
                   <Play className="w-5 h-5 text-white ml-0.5" />

@@ -1,5 +1,6 @@
 import { createClientFromRequest, serve } from '../_shared/base44.ts';
 import Stripe from 'npm:stripe@17.5.0';
+import { serviceClient } from '../_shared/viewer.ts';
 
 // Checked per request (not at boot) so a missing key returns a readable JSON error with CORS
 // headers instead of crashing the worker, which browsers report as a vague CORS failure.
@@ -31,7 +32,21 @@ serve(async (req) => {
       return Response.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
-    if (event.type === 'payment_intent.succeeded') {
+    // Viewer tiers: memberships, title purchases and rentals (see createCheckoutSession).
+    if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
+      await handleViewerCheckout(event.data.object as Stripe.Checkout.Session);
+    }
+    if (event.type.startsWith('customer.subscription.')) {
+      // Stripe can deliver these out of order; always save the subscription's current state.
+      const sub = event.data.object as Stripe.Subscription;
+      if (sub.metadata?.gh_kind === 'subscription') await syncSubscription(await stripe.subscriptions.retrieve(sub.id));
+    }
+
+    // BuyScreen product purchases. Viewer-tier payments and membership invoices are handled
+    // above and must not create product orders or fee splits.
+    const isViewerPayment = (pi: Stripe.PaymentIntent) => Boolean(pi.metadata?.gh_kind || pi.invoice);
+
+    if (event.type === 'payment_intent.succeeded' && !isViewerPayment(event.data.object)) {
       const pi = event.data.object;
       const md = pi.metadata || {};
 
@@ -77,7 +92,7 @@ serve(async (req) => {
       console.log('Transaction + Order created for payment:', pi.id);
     }
 
-    if (event.type === 'payment_intent.payment_failed') {
+    if (event.type === 'payment_intent.payment_failed' && !isViewerPayment(event.data.object)) {
       const pi = event.data.object;
       const md = pi.metadata || {};
 
@@ -104,3 +119,69 @@ serve(async (req) => {
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
+
+// ---- Viewer tiers -------------------------------------------------------------------------
+async function handleViewerCheckout(session: Stripe.Checkout.Session) {
+  const md = session.metadata || {};
+  if (!md.gh_kind || !md.user_id) return; // not a viewer-tier checkout
+  if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') return;
+  const sb = serviceClient();
+  const customerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
+
+  if (md.gh_kind === 'subscription') {
+    const subId = typeof session.subscription === 'string' ? session.subscription : session.subscription?.id;
+    if (subId) await syncSubscription(await stripe!.subscriptions.retrieve(subId));
+    return;
+  }
+
+  const { data: profile } = await sb.from('profiles').select('email').eq('id', md.user_id).maybeSingle();
+  const hours = parseInt(md.rental_hours || '0', 10) || 48;
+  const { error } = await sb.from('entitlement').upsert({
+    user_id: md.user_id,
+    user_email: profile?.email || session.customer_details?.email || null,
+    kind: md.gh_kind === 'rental' ? 'rental' : 'purchase',
+    episode_id: md.episode_id,
+    status: 'active',
+    amount: (session.amount_total || 0) / 100,
+    currency: session.currency,
+    // Rental clock starts at payment.
+    expires_at: md.gh_kind === 'rental' ? new Date(Date.now() + hours * 3600_000).toISOString() : null,
+    stripe_customer_id: customerId,
+    stripe_checkout_session_id: session.id,
+    updated_date: new Date().toISOString(),
+  }, { onConflict: 'stripe_checkout_session_id', ignoreDuplicates: true });
+  if (error) throw new Error(`Saving ${md.gh_kind} failed: ${error.message}`);
+  console.log(`Viewer ${md.gh_kind} recorded:`, session.id);
+}
+
+async function syncSubscription(sub: Stripe.Subscription) {
+  if (sub.metadata?.gh_kind !== 'subscription') return; // some other Stripe subscription
+  const sb = serviceClient();
+  const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+  let userId = sub.metadata.user_id;
+  if (!userId) {
+    const { data } = await sb.from('stripe_customer').select('user_id').eq('customer_id', customerId).maybeSingle();
+    userId = data?.user_id;
+  }
+  if (!userId) { console.error('No user for subscription', sub.id); return; }
+
+  const item = sub.items?.data?.[0];
+  // deno-lint-ignore no-explicit-any
+  const periodEnd = (sub as any).current_period_end ?? (item as any)?.current_period_end;
+  const { data: profile } = await sb.from('profiles').select('email').eq('id', userId).maybeSingle();
+  const { error } = await sb.from('entitlement').upsert({
+    user_id: userId,
+    user_email: profile?.email || null,
+    kind: 'subscription',
+    status: sub.status, // active, trialing, past_due, canceled, unpaid, incomplete...
+    plan_interval: item?.price?.recurring?.interval || null,
+    amount: (item?.price?.unit_amount || 0) / 100,
+    currency: sub.currency,
+    expires_at: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+    stripe_customer_id: customerId,
+    stripe_subscription_id: sub.id,
+    updated_date: new Date().toISOString(),
+  }, { onConflict: 'stripe_subscription_id' });
+  if (error) throw new Error(`Saving subscription failed: ${error.message}`);
+  console.log('Subscription synced:', sub.id, sub.status);
+}

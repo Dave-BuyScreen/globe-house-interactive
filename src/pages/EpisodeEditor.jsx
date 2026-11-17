@@ -28,6 +28,7 @@ import ProductDetectionPanel from "../components/editor/ProductDetectionPanel";
 import AutoScanPanel from "../components/editor/AutoScanPanel";
 import CollaboratorPanel from "../components/collaboration/CollaboratorPanel";
 import VideoUploadProcessor from "../components/video/VideoUploadProcessor";
+import AccessSettings, { accessFieldsForSave } from "../components/editor/AccessSettings";
 
 export default function EpisodeEditor() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -65,7 +66,12 @@ export default function EpisodeEditor() {
     status: "draft",
     category: "other",
     assigned_floors: [],
-    triggers: []
+    triggers: [],
+    access_tier: "free",
+    purchase_price: "",
+    rental_price: "",
+    rental_hours: "",
+    trailer_url: ""
   });
 
   const [keywordInput, setKeywordInput] = useState("");
@@ -103,7 +109,12 @@ export default function EpisodeEditor() {
         status: ep.status || "draft",
         category: ep.category || "other",
         assigned_floors: ep.assigned_floors || [],
-        triggers: ep.triggers || []
+        triggers: ep.triggers || [],
+        access_tier: ep.access_tier || "free",
+        purchase_price: ep.purchase_price ?? "",
+        rental_price: ep.rental_price ?? "",
+        rental_hours: ep.rental_hours ?? "",
+        trailer_url: ep.trailer_url || ""
       });
       initializedRef.current = true;
     }
@@ -162,7 +173,7 @@ export default function EpisodeEditor() {
   });
 
   const handleSave = () => {
-    saveMutation.mutate(form);
+    saveMutation.mutate({ ...form, ...accessFieldsForSave(form) });
   };
 
   const handleFileUpload = async (e, field) => {
@@ -441,6 +452,8 @@ export default function EpisodeEditor() {
             </Select>
             </div>
             </section>
+
+        <AccessSettings form={form} setForm={setForm} />
 
         {/* Floor Assignment */}
         <section className="bg-[#13131a] border border-white/[0.06] rounded-2xl p-6">

@@ -19,6 +19,9 @@ const VerifyAdmin = lazy(() => import('./pages/VerifyAdmin'));
 const Videos = lazy(() => import('./pages/Videos'));
 const Wardrobe = lazy(() => import('./pages/Wardrobe'));
 const Wishlist = lazy(() => import('./pages/Wishlist'));
+const Subscribe = lazy(() => import('./pages/Subscribe'));
+const Vault = lazy(() => import('./pages/Vault'));
+const Monetization = lazy(() => import('./pages/Monetization'));
 
 export const PAGES = {
     "ARLandingPage": ARLandingPage,
@@ -37,6 +40,9 @@ export const PAGES = {
     "Videos": Videos,
     "Wardrobe": Wardrobe,
     "Wishlist": Wishlist,
+    "Subscribe": Subscribe,
+    "Vault": Vault,
+    "Monetization": Monetization,
 }
 
 export const pagesConfig = {

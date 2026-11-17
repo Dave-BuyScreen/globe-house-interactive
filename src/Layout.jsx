@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
-import { Tv, ShoppingBag, User, Eye, EyeOff } from "lucide-react";
+import { Tv, ShoppingBag, User, Eye, EyeOff, Gem, Crown } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -78,11 +78,13 @@ export default function Layout({ children, currentPageName }) {
 
   const primaryNav = [
     { name: "Videos", page: "Videos", icon: Tv },
+    { name: "The Vault", page: "Vault", icon: Gem },
     { name: "Orders", page: "Orders", icon: ShoppingBag },
+    { name: "Membership", page: "Subscribe", icon: Crown },
     { name: "Invites", page: "CollaborationInvites", icon: User },
   ];
 
-  const adminToolPages = ["Dashboard", "Wardrobe", "Analytics", "TriggerAnalytics", "EngagementAnalytics", "FloorAnalytics", "MerchantApproval"];
+  const adminToolPages = ["Dashboard", "Wardrobe", "Analytics", "TriggerAnalytics", "EngagementAnalytics", "FloorAnalytics", "MerchantApproval", "Monetization"];
 
   const mid = Math.floor(primaryNav.length / 2);
   const leftNav = primaryNav.slice(0, mid);
@@ -150,6 +152,16 @@ export default function Layout({ children, currentPageName }) {
 
               {/* Right zone */}
               <div className="flex-1 flex items-center justify-center sm:justify-end gap-1 sm:gap-2">
+                <Link to={createPageUrl("Vault")} className="sm:hidden" aria-label="The Vault">
+                  <button className="p-2 rounded-lg hover:bg-black/20 transition-colors">
+                    <Gem className="w-5 h-5 text-[#E6D3B6]/70" />
+                  </button>
+                </Link>
+                <Link to={createPageUrl("Subscribe")} className="sm:hidden" aria-label="Membership">
+                  <button className="p-2 rounded-lg hover:bg-black/20 transition-colors">
+                    <Crown className="w-5 h-5 text-[#E6D3B6]/70" />
+                  </button>
+                </Link>
                 <Link to={createPageUrl("UserProfile")} className="sm:hidden">
                   <button className="p-2 rounded-lg hover:bg-black/20 transition-colors">
                     <User className="w-5 h-5 text-[#E6D3B6]/70" />

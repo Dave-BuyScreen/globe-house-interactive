@@ -2,8 +2,18 @@
 // Ported functions keep their original code; only the import line and Deno.serve -> serve change.
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.45.4';
 import Anthropic from 'npm:@anthropic-ai/sdk';
-import entityTables from './entity-tables.json' with { type: 'json' };
-import entityColumns from './entity-columns.json' with { type: 'json' };
+import baseTables from './entity-tables.json' with { type: 'json' };
+import baseColumns from './entity-columns.json' with { type: 'json' };
+import extensions from './entity-extensions.json' with { type: 'json' };
+
+// Base44 entities plus tables added after the port (viewer tiers, ads).
+const entityTables: Record<string, string> = { ...baseTables, ...extensions.tables };
+const entityColumns: Record<string, string[]> = Object.fromEntries(
+  [...new Set([...Object.keys(baseColumns), ...Object.keys(extensions.columns)])].map((k) => [
+    k,
+    [...((baseColumns as Record<string, string[]>)[k] || []), ...((extensions.columns as Record<string, string[]>)[k] || [])],
+  ]),
+);
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -31,7 +41,7 @@ const httpError = (message: string, status: number) => Object.assign(new Error(m
 // Keep only real columns: Base44 silently accepted unknown/read-only fields, Postgres rejects them.
 const clean = (name: string, row: Record<string, unknown>) => {
   if (!row || typeof row !== 'object') return row;
-  const allowed = new Set((entityColumns as Record<string, string[]>)[name] || []);
+  const allowed = new Set(entityColumns[name] || []);
   return Object.fromEntries(Object.entries(row).filter(([k]) => allowed.has(k)));
 };
 
@@ -42,9 +52,27 @@ const stripNulls = (row: any) =>
     ? Object.fromEntries(Object.entries(row).filter(([, v]) => v !== null))
     : row;
 
+// Locked episodes keep their video links in episode_media (see viewer_tiers migration).
+// Merge them back so ported functions (auto scan, frame extraction...) still see the links.
+// deno-lint-ignore no-explicit-any
+async function attachEpisodeMedia(sb: SupabaseClient, result: any) {
+  // deno-lint-ignore no-explicit-any
+  const rows = (Array.isArray(result) ? result : [result]).filter((r: any) => r && r.access_tier && r.access_tier !== 'free');
+  if (!rows.length) return result;
+  // deno-lint-ignore no-explicit-any
+  const { data } = await sb.from('episode_media').select('episode_id, vimeo_url, youtube_url').in('episode_id', rows.map((r: any) => r.id));
+  for (const m of data || []) {
+    // deno-lint-ignore no-explicit-any
+    const row = rows.find((r: any) => r.id === m.episode_id);
+    if (m.vimeo_url) row.vimeo_url = m.vimeo_url;
+    if (m.youtube_url) row.youtube_url = m.youtube_url;
+  }
+  return result;
+}
+
 function makeEntities(sb: SupabaseClient) {
   const make = (name: string) => {
-    const table = (entityTables as Record<string, string>)[name];
+    const table = entityTables[name];
     if (!table) throw new Error(`Unknown entity: ${name}`);
     // deno-lint-ignore no-explicit-any
     const sort = (q: any, s?: string) => {
@@ -61,9 +89,14 @@ function makeEntities(sb: SupabaseClient) {
       return q;
     };
     // deno-lint-ignore no-explicit-any
-    const unwrap = ({ data, error }: any) => {
+    const unwrapRaw = ({ data, error }: any) => {
       if (error) throw httpError(error.message, 400);
       return Array.isArray(data) ? data.map(stripNulls) : stripNulls(data);
+    };
+    // deno-lint-ignore no-explicit-any
+    const unwrap = (res: any) => {
+      const out = unwrapRaw(res);
+      return name === 'Episode' ? attachEpisodeMedia(sb, out) : out;
     };
     return {
       list: async (s?: string, limit?: number) => {

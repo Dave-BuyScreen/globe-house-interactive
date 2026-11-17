@@ -4,6 +4,7 @@ import { createPageUrl } from "../../utils";
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
 import FloorAssignmentControl from "./FloorAssignmentControl";
+import TierBadge from "../tiers/TierBadge";
 
 // Dedicated card for the Video Library grid. Mirrors EpisodeCard's visual
 // but adds a per-card floor-assignment row (badges + "Floors" popover).
@@ -42,6 +43,7 @@ export default function VideoLibraryCard({
               </div>
             )}
 
+            <TierBadge episode={episode} className="absolute bottom-2 left-2 z-10" />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
                 <Play className="w-5 h-5 text-white ml-0.5" />

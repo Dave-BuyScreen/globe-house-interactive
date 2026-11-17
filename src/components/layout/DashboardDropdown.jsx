@@ -16,6 +16,9 @@ import {
   Tv,
   User,
   Layers,
+  Coins,
+  Gem,
+  Crown,
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 
@@ -27,12 +30,15 @@ const ADMIN_TOOLS = [
   { name: "Heatmaps", page: "EngagementAnalytics", icon: Flame },
   { name: "Floors", page: "FloorAnalytics", icon: Layers },
   { name: "Approvals", page: "MerchantApproval", icon: ShieldCheck },
+  { name: "Monetization", page: "Monetization", icon: Coins },
 ];
 
 // Primary nav tabs folded into the dropdown on mobile only
 const MOBILE_NAV = [
   { name: "Videos", page: "Videos", icon: Tv },
+  { name: "The Vault", page: "Vault", icon: Gem },
   { name: "Orders", page: "Orders", icon: ShoppingBag },
+  { name: "Membership", page: "Subscribe", icon: Crown },
   { name: "Invites", page: "CollaborationInvites", icon: User },
 ];
 
