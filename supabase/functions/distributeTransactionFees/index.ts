@@ -1,16 +1,24 @@
 import { createClientFromRequest, serve } from '../_shared/base44.ts';
 import Stripe from 'npm:stripe@17.5.0';
 
+// Checked per request (not at boot) so a missing key returns a readable JSON error with CORS
+// headers instead of crashing the worker, which browsers report as a vague CORS failure.
 const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
-if (!stripeKey) {
-  throw new Error('STRIPE_SECRET_KEY environment variable is not set');
-}
-
-const stripe = new Stripe(stripeKey, {
-  apiVersion: '2024-12-18.acacia',
-});
+const stripe = stripeKey ? new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' }) : null;
+const stripeMissing = () =>
+  Response.json({ error: 'Payments are not configured yet (STRIPE_SECRET_KEY is not set)' }, { status: 503 });
 
 serve(async (req) => {
+  // Server-only: stripeWebhook calls this with the service role key. On Base44 it ran as an
+  // entity automation; on Supabase it is a public URL, and repeat calls would re-add creator
+  // earnings and product revenue, so reject any other caller.
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!serviceKey || req.headers.get('Authorization') !== `Bearer ${serviceKey}`) {
+    return Response.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  if (!stripe) return stripeMissing();
+
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json();

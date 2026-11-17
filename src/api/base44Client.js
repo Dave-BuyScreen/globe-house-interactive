@@ -86,7 +86,10 @@ const makeEntity = (name) => {
       return unwrap(await from().insert((rows || []).map((r) => clean(name, r))).select());
     },
     async update(id, data) {
-      return unwrap(await from().update(clean(name, data)).eq('id', id).select().single());
+      // Base44 ignored unknown fields; if nothing real is left, just return the record.
+      const row = clean(name, data);
+      if (!Object.keys(row || {}).length) return this.get(id);
+      return unwrap(await from().update(row).eq('id', id).select().single());
     },
     async delete(id) {
       unwrap(await from().delete().eq('id', id));
@@ -196,6 +199,9 @@ export const base44 = {
   integrations,
   functions: { invoke: invokeFunction },
   appLogs: { logUserInApp: async () => {} },
+  // Base44's built-in event tracking (sent to Base44's own analytics, never to app tables).
+  // Player/BuyScreen call it synchronously in click handlers, so it must exist and never throw.
+  analytics: { track: () => {} },
 };
 
 export default base44;

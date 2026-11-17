@@ -79,8 +79,12 @@ function makeEntities(sb: SupabaseClient) {
       get: async (id: string) => unwrap(await sb.from(table).select('*').eq('id', id).maybeSingle()),
       create: async (data: Record<string, unknown>) => unwrap(await sb.from(table).insert(clean(name, data)).select().single()),
       bulkCreate: async (rows: Record<string, unknown>[]) => unwrap(await sb.from(table).insert(rows.map((r) => clean(name, r))).select()),
-      update: async (id: string, data: Record<string, unknown>) =>
-        unwrap(await sb.from(table).update(clean(name, data)).eq('id', id).select().single()),
+      update: async (id: string, data: Record<string, unknown>) => {
+        // Base44 ignored unknown fields; if nothing real is left, just return the record.
+        const row = clean(name, data);
+        if (!Object.keys(row || {}).length) return unwrap(await sb.from(table).select('*').eq('id', id).single());
+        return unwrap(await sb.from(table).update(row).eq('id', id).select().single());
+      },
       delete: async (id: string) => { unwrap(await sb.from(table).delete().eq('id', id)); return { id }; },
     };
   };

@@ -1,18 +1,17 @@
 import { createClientFromRequest, serve } from '../_shared/base44.ts';
 import Stripe from 'npm:stripe@17.5.0';
 
+// Checked per request (not at boot) so a missing key returns a readable JSON error with CORS
+// headers instead of crashing the worker, which browsers report as a vague CORS failure.
 const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
-if (!stripeKey) {
-  throw new Error('STRIPE_SECRET_KEY environment variable is not set');
-}
-
-const stripe = new Stripe(stripeKey, {
-  apiVersion: '2024-12-18.acacia',
-});
+const stripe = stripeKey ? new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' }) : null;
+const stripeMissing = () =>
+  Response.json({ error: 'Payments are not configured yet (STRIPE_SECRET_KEY is not set)' }, { status: 503 });
 
 const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
 serve(async (req) => {
+  if (!stripe) return stripeMissing();
   try {
     const base44 = createClientFromRequest(req);
 

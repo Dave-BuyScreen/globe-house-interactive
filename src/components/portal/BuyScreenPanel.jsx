@@ -13,7 +13,12 @@ import QRCodeLauncher from "../ar/QRCodeLauncher";
 // Initialize Stripe with error handling
 let stripePromise = null;
 try {
-  stripePromise = loadStripe('pk_live_51LlEa3D7VxANrcNIwTWcVQBT4QzJDmzhhcRtFnkmdOMPch53F4mpydGhSss4BBbHWIUtkLii5xajtJxR0rkKeTPK00uZC27APs');
+  // Must come from the same Stripe account as the STRIPE_SECRET_KEY Edge Function secret.
+  // Fallback is the live key Base44 shipped with.
+  stripePromise = loadStripe(
+    import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ||
+      'pk_live_51LlEa3D7VxANrcNIwTWcVQBT4QzJDmzhhcRtFnkmdOMPch53F4mpydGhSss4BBbHWIUtkLii5xajtJxR0rkKeTPK00uZC27APs'
+  );
 } catch (error) {
   console.error('Failed to initialize Stripe:', error);
 }

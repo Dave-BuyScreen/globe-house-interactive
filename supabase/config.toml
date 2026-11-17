@@ -1,5 +1,7 @@
 project_id = "ohfjvvllqlkbxduslypl"
 
 # Stripe calls this directly, so it cannot send a Supabase JWT; the function verifies the Stripe signature instead.
+# CLI 2.90 lowercases this key on bulk deploy (creates a stray "stripewebhook" and leaves JWT on).
+# Deploy it on its own: supabase functions deploy stripeWebhook --no-verify-jwt --use-api
 [functions.stripeWebhook]
 verify_jwt = false
