@@ -1,0 +1,11 @@
+{
+  "name": "GlobeHouse Immersive AR",
+  "short_name": "GlobeHouse",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#120e0a",
+  "theme_color": "#120e0a",
+  "icons": [
+    { "src": "/brand/7d9484b19_OfficialGlobeHouseFavicon.png", "sizes": "any", "type": "image/png" }
+  ]
+}
