@@ -11,7 +11,7 @@ import {
 const fmtDateTime = (d) => (d ? new Date(d).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "");
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "");
 
-function PlanCard({ title, price, period, features, highlight, action }) {
+function PlanCard({ title, price, period, features, highlight, badge = "Best value", action }) {
   return (
     <div
       className={`relative rounded-2xl p-6 flex flex-col border ${
@@ -20,7 +20,7 @@ function PlanCard({ title, price, period, features, highlight, action }) {
     >
       {highlight && (
         <span className="absolute -top-3 left-6 px-3 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest bg-[#D4AF37] text-[#1a1208]">
-          Best value
+          {badge}
         </span>
       )}
       <h3 className="font-display text-xl text-[#EDE3D0]">{title}</h3>
@@ -85,6 +85,11 @@ export default function Subscribe() {
   );
 
   const memberFeatures = ["Every members-only episode", "No ads on free episodes", "Cancel any time"];
+  // e.g. $4.99/month vs $50/year -> "2 months free"
+  const monthly = Number(settings.subscription_monthly_price) || 0;
+  const yearly = Number(settings.subscription_yearly_price) || 0;
+  const monthsFree = monthly > 0 && yearly > 0 ? Math.floor(12 - yearly / monthly) : 0;
+  const yearlyBadge = monthsFree >= 1 ? `${monthsFree} month${monthsFree > 1 ? "s" : ""} free` : "Best value";
 
   return (
     <div className="min-h-screen px-4 sm:px-6 py-10 max-w-5xl mx-auto text-[#EDE3D0]">
@@ -129,7 +134,7 @@ export default function Subscribe() {
         <PlanCard
           title="Free"
           price={formatPrice(0, currency)}
-          features={["All free episodes", "Short ads before episodes", "Rent or buy any title"]}
+          features={["All free episodes", "Short ads before episodes", "Rent or buy Vault titles"]}
           action={
             <Link to="/Dashboard" className="w-full py-3 rounded-xl text-sm text-center border border-white/10 text-[#EDE3D0]/70 hover:bg-white/5 inline-flex items-center justify-center gap-2">
               <Tv className="w-4 h-4" /> Start watching
@@ -151,6 +156,7 @@ export default function Subscribe() {
             price={formatPrice(settings.subscription_yearly_price, currency)}
             period="/ year"
             highlight
+            badge={yearlyBadge}
             features={memberFeatures}
             action={joinButton("year", "Join yearly", true)}
           />

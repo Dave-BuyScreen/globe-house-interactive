@@ -12,6 +12,7 @@ import CavettoCrestCrown from "@/components/layout/cabinet/CavettoCrestCrown";
 import FleurDeLisCenterpiece from "@/components/layout/cabinet/FleurDeLisCenterpiece";
 import GreekKeyCorner from "@/components/layout/cabinet/GreekKeyCorner";
 import FloatingDashboardButton from "@/components/dashboard/FloatingDashboardButton";
+import { isStaff } from "@/components/StaffRoute";
 
 function NavLink({ item, isActive }) {
   const Icon = item.icon;
@@ -76,8 +77,10 @@ export default function Layout({ children, currentPageName }) {
     navigate({ search: params.toString() }, { replace: true });
   };
 
+  // The Video Library is the upload / products / triggers back office: team accounts only.
+  const showStaffTools = isStaff(user) && !previewAsUser;
   const primaryNav = [
-    { name: "Videos", page: "Videos", icon: Tv },
+    ...(showStaffTools ? [{ name: "Videos", page: "Videos", icon: Tv }] : []),
     { name: "The Vault", page: "Vault", icon: Gem },
     { name: "Orders", page: "Orders", icon: ShoppingBag },
     { name: "Membership", page: "Subscribe", icon: Crown },

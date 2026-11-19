@@ -6,7 +6,7 @@ import { base44 } from "@/api/base44Client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { activeTitleAccess, formatPrice, useCurrentUser, useMonetizationSettings, useMyEntitlements } from "@/lib/viewerAccess";
 
-// The Vault: one-off special projects, each bought on its own.
+// The Vault: pay-per-view titles, rented or bought one by one (not part of membership).
 export default function Vault() {
   const { data: user } = useCurrentUser();
   const { data: settings = {} } = useMonetizationSettings();
@@ -22,7 +22,7 @@ export default function Vault() {
         <Gem className="w-8 h-8 text-[#D4AF37] mx-auto mb-3" />
         <h1 className="font-display text-3xl sm:text-5xl mb-3">The Vault</h1>
         <p className="text-[#EDE3D0]/60 max-w-xl mx-auto">
-          Special one-off projects. Buy once and watch any time. Not part of membership.
+          Pay per view. Rent or buy each title on its own. Not part of membership.
         </p>
       </div>
 
@@ -56,7 +56,13 @@ export default function Vault() {
                   <h3 className="font-display text-xl mb-1">{ep.title}</h3>
                   {ep.summary && <p className="text-sm text-[#EDE3D0]/50 line-clamp-2 mb-3">{ep.summary}</p>}
                   <p className="text-sm font-semibold text-[#D4AF37]">
-                    {owned ? "In your collection" : ep.purchase_price > 0 ? formatPrice(ep.purchase_price, settings.currency) : "Coming soon"}
+                    {owned
+                      ? "In your collection"
+                      : ep.rental_price > 0
+                        ? `Rent ${formatPrice(ep.rental_price, settings.currency)}${ep.purchase_price > 0 ? ` · Buy ${formatPrice(ep.purchase_price, settings.currency)}` : ""}`
+                        : ep.purchase_price > 0
+                          ? `Buy ${formatPrice(ep.purchase_price, settings.currency)}`
+                          : "Coming soon"}
                   </p>
                 </div>
               </Link>

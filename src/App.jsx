@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import SiteBranding from '@/components/SiteBranding';
 import BrandedSplash from '@/components/BrandedSplash';
+import StaffRoute, { STAFF_PAGES } from '@/components/StaffRoute';
 
 // Lazy-loaded pages — split into separate chunks, loaded on navigation
 const TriggerAnalytics = lazy(() => import('./pages/TriggerAnalytics'));
@@ -75,17 +76,23 @@ const AuthenticatedApp = () => {
           key={path}
           path={`/${path}`}
           element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
-            </LayoutWrapper>
+            STAFF_PAGES.includes(path) ? (
+              <StaffRoute>
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              </StaffRoute>
+            ) : (
+              <LayoutWrapper currentPageName={path}>
+                <Page />
+              </LayoutWrapper>
+            )
           }
         />
       ))}
-      <Route path="/TriggerAnalytics" element={
-        <LayoutWrapper currentPageName="TriggerAnalytics">
+      <Route path="/TriggerAnalytics" element={<StaffRoute><LayoutWrapper currentPageName="TriggerAnalytics">
           <TriggerAnalytics />
-        </LayoutWrapper>
-      } />
+        </LayoutWrapper></StaffRoute>} />
       <Route path="/EpisodePreview" element={<EpisodePreview />} />
       <Route path="/CollaborationInvites" element={
         <LayoutWrapper currentPageName="CollaborationInvites">
@@ -103,27 +110,19 @@ const AuthenticatedApp = () => {
           <Virtual />
         </LayoutWrapper>
       } />
-      <Route path="/UBPLEditor" element={
-        <LayoutWrapper currentPageName="UBPLEditor">
+      <Route path="/UBPLEditor" element={<StaffRoute><LayoutWrapper currentPageName="UBPLEditor">
           <UBPLEditor />
-        </LayoutWrapper>
-      } />
-      <Route path="/VideoMapper" element={<VideoMapper />} />
-      <Route path="/MerchantApproval" element={
-        <LayoutWrapper currentPageName="MerchantApproval">
+        </LayoutWrapper></StaffRoute>} />
+      <Route path="/VideoMapper" element={<StaffRoute><VideoMapper /></StaffRoute>} />
+      <Route path="/MerchantApproval" element={<StaffRoute><LayoutWrapper currentPageName="MerchantApproval">
           <MerchantApproval />
-        </LayoutWrapper>
-      } />
-      <Route path="/EngagementAnalytics" element={
-        <LayoutWrapper currentPageName="EngagementAnalytics">
+        </LayoutWrapper></StaffRoute>} />
+      <Route path="/EngagementAnalytics" element={<StaffRoute><LayoutWrapper currentPageName="EngagementAnalytics">
           <EngagementAnalytics />
-        </LayoutWrapper>
-      } />
-      <Route path="/FloorAnalytics" element={
-        <LayoutWrapper currentPageName="FloorAnalytics">
+        </LayoutWrapper></StaffRoute>} />
+      <Route path="/FloorAnalytics" element={<StaffRoute><LayoutWrapper currentPageName="FloorAnalytics">
           <FloorAnalytics />
-        </LayoutWrapper>
-      } />
+        </LayoutWrapper></StaffRoute>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </Suspense>

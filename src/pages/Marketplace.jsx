@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import EpisodeCard from "../components/dashboard/EpisodeCard";
+import { isStaff } from "@/components/StaffRoute";
 
 const CATEGORIES = [
   { key: "all", label: "All" },
@@ -25,6 +26,13 @@ export default function Marketplace() {
   const initialCat = searchParams.get("category") || "all";
   const [activeCategory, setActiveCategory] = useState(initialCat);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: user } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: () => base44.auth.me(),
+    retry: false,
+  });
+  const canUpload = isStaff(user);
 
   const { data: episodes = [], isLoading } = useQuery({
     queryKey: ["marketplaceEpisodes"],
@@ -83,12 +91,14 @@ export default function Marketplace() {
             <p className="text-white/40 text-sm">Shoppable videos — click to watch and shop in real time</p>
           </div>
         </div>
-        <Link to={createPageUrl("EpisodeEditor")}>
-          <Button className="bg-emerald-500 hover:bg-emerald-600 rounded-xl h-11 gap-2">
-            <Film className="w-4 h-4" />
-            Upload Video
-          </Button>
-        </Link>
+        {canUpload && (
+          <Link to={createPageUrl("EpisodeEditor")}>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 rounded-xl h-11 gap-2">
+              <Film className="w-4 h-4" />
+              Upload Video
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Search */}
@@ -149,13 +159,17 @@ export default function Marketplace() {
           <h3 className="text-xl font-semibold text-white/80 mb-2">
             {searchQuery ? "No videos found" : `No ${activeCategory !== "all" ? activeCategory : ""} videos yet`}
           </h3>
-          <p className="text-white/30 mb-6">Upload your first shoppable video to the marketplace</p>
-          <Link to={createPageUrl("EpisodeEditor")}>
-            <Button className="bg-emerald-500 hover:bg-emerald-600 rounded-xl">
-              <Film className="w-4 h-4 mr-2" />
-              Upload Video
-            </Button>
-          </Link>
+          {canUpload && (
+            <>
+              <p className="text-white/30 mb-6">Upload your first shoppable video to the marketplace</p>
+              <Link to={createPageUrl("EpisodeEditor")}>
+                <Button className="bg-emerald-500 hover:bg-emerald-600 rounded-xl">
+                  <Film className="w-4 h-4 mr-2" />
+                  Upload Video
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       ) : (
         <div className="flex flex-wrap gap-5">

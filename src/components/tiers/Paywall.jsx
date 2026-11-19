@@ -107,14 +107,14 @@ export default function Paywall({ episode, user, checkoutState }) {
               Buy · {formatPrice(episode.purchase_price, currency)}
             </GoldButton>
           )}
-          {tier === "tvod" && episode.rental_price > 0 && (
+          {(tier === "tvod" || tier === "vault") && episode.rental_price > 0 && (
             <GoldButton variant="outline" busy={busy === "rent"} onClick={() => go("rent", { kind: "rental", episodeId: episode.id })}>
               Rent {rentalHours}h · {formatPrice(episode.rental_price, currency)}
             </GoldButton>
           )}
         </div>
 
-        {tier !== "subscription" && !(episode.purchase_price > 0) && !(tier === "tvod" && episode.rental_price > 0) && (
+        {tier !== "subscription" && !(episode.purchase_price > 0) && !((tier === "tvod" || tier === "vault") && episode.rental_price > 0) && (
           <p className="text-sm text-[#EDE3D0]/50">Not on sale yet.</p>
         )}
         {!user && <p className="mt-5 text-xs text-[#EDE3D0]/40">You'll be asked to sign in first.</p>}

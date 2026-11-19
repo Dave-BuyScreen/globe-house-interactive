@@ -4,11 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TIERS } from "@/lib/viewerAccess";
 
-const OPTIONS = ["free", "subscription", "tvod", "vault"];
+// Dave's three sections: Free (ads), Membership, The Vault (pay per view).
+// "tvod" is the older pay-per-view tier; it is only offered for titles that already use it.
+const SECTIONS = ["free", "subscription", "vault"];
 
 // Episode editor section: who can watch this episode and what it costs.
 export default function AccessSettings({ form, setForm }) {
   const tier = form.access_tier || "free";
+  const OPTIONS = tier === "tvod" ? [...SECTIONS, "tvod"] : SECTIONS;
+  const sold = tier === "tvod" || tier === "vault";
   const set = (key) => (e) => setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
   return (
@@ -23,7 +27,7 @@ export default function AccessSettings({ form, setForm }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+      <div className={`grid grid-cols-1 gap-2 mb-5 ${OPTIONS.length === 4 ? "sm:grid-cols-4" : "sm:grid-cols-3"}`}>
         {OPTIONS.map((key) => (
           <button
             key={key}
@@ -41,18 +45,18 @@ export default function AccessSettings({ form, setForm }) {
         ))}
       </div>
 
-      {(tier === "tvod" || tier === "vault") && (
+      {sold && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div>
             <Label className="text-xs text-white/40 mb-1.5">Buy price (USD)</Label>
-            <Input type="number" min="0" step="0.01" placeholder="e.g. 9.99" value={form.purchase_price ?? ""}
+            <Input type="number" min="0" step="0.01" placeholder="e.g. 9.98" value={form.purchase_price ?? ""}
               onChange={set("purchase_price")} className="h-11 bg-white/[0.04] border-white/[0.08] text-white" />
           </div>
-          {tier === "tvod" && (
+          {sold && (
             <>
               <div>
                 <Label className="text-xs text-white/40 mb-1.5">Rent price (USD)</Label>
-                <Input type="number" min="0" step="0.01" placeholder="e.g. 3.99" value={form.rental_price ?? ""}
+                <Input type="number" min="0" step="0.01" placeholder="2.99 or 3.99" value={form.rental_price ?? ""}
                   onChange={set("rental_price")} className="h-11 bg-white/[0.04] border-white/[0.08] text-white" />
               </div>
               <div>

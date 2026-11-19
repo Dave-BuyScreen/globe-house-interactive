@@ -7,9 +7,9 @@ import { base44 } from "@/api/base44Client";
 
 export const TIERS = {
   free: { label: "Free", short: "Free", description: "Free to watch, with short ads" },
-  subscription: { label: "Members", short: "Members", description: "Included with membership" },
+  subscription: { label: "Membership", short: "Members", description: "Included with Full Membership" },
   tvod: { label: "Pay per view", short: "Rent / Buy", description: "Rent or buy this title" },
-  vault: { label: "The Vault", short: "Vault", description: "Special project, bought on its own" },
+  vault: { label: "The Vault", short: "Vault", description: "Pay per view: rent or buy, not in membership" },
 };
 
 export const tierOf = (episode) => (episode?.access_tier && TIERS[episode.access_tier] ? episode.access_tier : "free");

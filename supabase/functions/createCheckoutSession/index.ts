@@ -76,9 +76,6 @@ serve(async (req) => {
     if (!['tvod', 'vault'].includes(ep.access_tier)) {
       return Response.json({ error: 'This title is not sold individually' }, { status: 400 });
     }
-    if (kind === 'rental' && ep.access_tier === 'vault') {
-      return Response.json({ error: 'Vault titles can only be bought' }, { status: 400 });
-    }
     const price = kind === 'rental' ? ep.rental_price : ep.purchase_price;
     if (!(Number(price) > 0)) {
       return Response.json({ error: `This title can't be ${kind === 'rental' ? 'rented' : 'bought'}` }, { status: 400 });

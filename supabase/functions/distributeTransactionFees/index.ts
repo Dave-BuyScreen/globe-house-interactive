@@ -58,7 +58,7 @@ serve(async (req) => {
     }
     if (!platformFeeRate) {
       const settings = await base44.asServiceRole.entities.PlatformSettings.list();
-      platformFeeRate = settings[0]?.platform_fee_rate ?? 0.05;
+      platformFeeRate = settings[0]?.platform_fee_rate ?? 0.03; // GlobeHouse Interactive takes 3% of BuyScreen sales
     }
 
     // --- Determine creator commission rate ---
