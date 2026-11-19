@@ -88,7 +88,7 @@ export default function Subscribe() {
   // e.g. $4.99/month vs $50/year -> "2 months free"
   const monthly = Number(settings.subscription_monthly_price) || 0;
   const yearly = Number(settings.subscription_yearly_price) || 0;
-  const monthsFree = monthly > 0 && yearly > 0 ? Math.floor(12 - yearly / monthly) : 0;
+  const monthsFree = monthly > 0 && yearly > 0 ? Math.round(12 - yearly / monthly) : 0;
   const yearlyBadge = monthsFree >= 1 ? `${monthsFree} month${monthsFree > 1 ? "s" : ""} free` : "Best value";
 
   return (
